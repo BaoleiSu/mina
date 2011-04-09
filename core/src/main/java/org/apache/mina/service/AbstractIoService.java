@@ -19,14 +19,14 @@
  */
 package org.apache.mina.service;
 
-import org.apache.mina.IoService;
-import org.apache.mina.IoServiceListener;
-import org.apache.mina.IoSession;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.mina.IoService;
+import org.apache.mina.IoServiceListener;
+import org.apache.mina.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,11 @@ public abstract class AbstractIoService implements IoService {
     
     private final Map<Long, IoSession> managedSessions = new ConcurrentHashMap<Long, IoSession>();
     
+    /**
+     * The handler, the interface with the application part.
+     */
+    private IoHandler handler;
+
     /**
      * Placeholder for storing all the listeners added
      */
@@ -74,5 +79,34 @@ public abstract class AbstractIoService implements IoService {
         if(listener != null) {
             listeners.remove(listener);    
         }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public final IoHandler getHandler() {
+        return handler;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public final void setHandler(IoHandler handler) {
+        if (handler == null) {
+            throw new IllegalArgumentException("handler cannot be null");
+        }
+
+        // TODO: check the service state, we should not be able to set the handler
+        // if the service is already started
+        /*
+        if (isActive()) {
+            throw new IllegalStateException(
+                    "handler cannot be set while the service is active.");
+        }
+        */
+
+        this.handler = handler;
     }
 }
