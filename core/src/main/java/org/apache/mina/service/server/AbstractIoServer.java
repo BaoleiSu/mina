@@ -28,5 +28,10 @@ import org.apache.mina.service.AbstractIoService;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public abstract class AbstractIoServer extends AbstractIoService implements IoServer {
-
+    /**
+     * Create an new AbstractIoServer instance
+     */
+    protected AbstractIoServer() {
+        super();
+    }
 }

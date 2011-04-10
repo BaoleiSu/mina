@@ -19,9 +19,18 @@
  */
 package org.apache.mina.transport.udp.nio;
 
-import org.apache.mina.transport.udp.AbstractUdpServer;
+import org.apache.mina.transport.udp.AbstractUdpClient;
 
-public class NioUdpClient extends AbstractUdpServer
-{
-
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class NioUdpClient extends AbstractUdpClient {
+    /**
+     * Create a new instance of NioUdpClient
+     */
+    public NioUdpClient() {
+        super();
+    }
 }

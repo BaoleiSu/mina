@@ -21,6 +21,16 @@ package org.apache.mina.transport.tcp.bio;
 
 import org.apache.mina.transport.tcp.AbstractTcpClient;
 
-public class BioTcpClient extends AbstractTcpClient
-{
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class BioTcpClient extends AbstractTcpClient {
+    /**
+     * Create a new instance of BioTcpClient
+     */
+    public BioTcpClient() {
+        super();
+    }
 }

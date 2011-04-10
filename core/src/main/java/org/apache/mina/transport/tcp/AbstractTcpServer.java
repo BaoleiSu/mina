@@ -25,9 +25,19 @@ import java.util.Set;
 
 import org.apache.mina.service.server.AbstractIoServer;
 
-public class AbstractTcpServer extends AbstractIoServer
-{
-
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class AbstractTcpServer extends AbstractIoServer {
+    /**
+     * Create an new AbsractTcpServer instance
+     */
+    protected AbstractTcpServer() {
+        super();
+    }
+    
     @Override
     public Set<SocketAddress> getLocalAddresses()
     {

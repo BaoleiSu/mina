@@ -25,8 +25,18 @@ import java.util.Set;
 
 import org.apache.mina.transport.tcp.AbstractTcpServer;
 
-public class BioTcpServer extends AbstractTcpServer
-{
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class BioTcpServer extends AbstractTcpServer {
+    /**
+     * Create a new instance of BioTcpServer
+     */
+    public BioTcpServer() {
+        super();
+    }
 
     @Override
     public Set<SocketAddress> getLocalAddresses()

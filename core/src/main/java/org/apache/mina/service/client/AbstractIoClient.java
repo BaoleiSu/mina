@@ -19,7 +19,75 @@
  */
 package org.apache.mina.service.client;
 
-public class AbstractIoClient
-{
+import java.net.SocketAddress;
+import java.util.Map;
+
+import org.apache.mina.ConnectFuture;
+import org.apache.mina.IoClient;
+import org.apache.mina.IoServiceListener;
+import org.apache.mina.IoSession;
+import org.apache.mina.service.AbstractIoService;
+
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class AbstractIoClient extends AbstractIoService implements IoClient {
+    /**
+     * Create an new AbstractIoClient instance
+     */
+    protected AbstractIoClient() {
+        super();
+    }
+
+    @Override
+    public Map<Long, IoSession> getManagedSessions()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addListener( IoServiceListener listener )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void removeListener( IoServiceListener listener )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public long getConnectTimeoutMillis()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setConnectTimeoutMillis( long connectTimeoutInMillis )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public ConnectFuture connect( SocketAddress remoteAddress )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConnectFuture connect( SocketAddress remoteAddress, SocketAddress localAddress )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

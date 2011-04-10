@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class NioTcpServer extends AbstractTcpServer {
-
     static final Logger LOG = LoggerFactory.getLogger(NioTcpServer.class);
 
     // list of bound addresses
@@ -52,6 +51,7 @@ public class NioTcpServer extends AbstractTcpServer {
     private SelectorStrategy strategy;
 
     public NioTcpServer(SelectorStrategy strategy) {
+        super();
         this.strategy = strategy;
     }
 

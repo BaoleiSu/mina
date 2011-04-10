@@ -21,7 +21,16 @@ package org.apache.mina.transport.udp.bio;
 
 import org.apache.mina.transport.udp.AbstractUdpServer;
 
-public class BioUdpServer extends AbstractUdpServer
-{
-
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class BioUdpServer extends AbstractUdpServer {
+    /**
+     * Create a new instance of BioUdpServer
+     */
+    public BioUdpServer() {
+        super();
+    }
 }

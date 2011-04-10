@@ -21,6 +21,16 @@ package org.apache.mina.transport.tcp;
 
 import org.apache.mina.service.client.AbstractIoClient;
 
-public class AbstractTcpClient extends AbstractIoClient
-{
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class AbstractTcpClient extends AbstractIoClient {
+    /**
+     * Create an new AbsractTcpClient instance
+     */
+    protected AbstractTcpClient() {
+        super();
+    }
 }

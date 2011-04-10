@@ -36,8 +36,11 @@ import org.slf4j.LoggerFactory;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public abstract class AbstractIoService implements IoService {
-
+    /** A logger for this class */
     static final Logger LOG = LoggerFactory.getLogger(AbstractIoService.class);
+    
+    /** The service state */
+    private ServiceState state;
     
     private final Map<Long, IoSession> managedSessions = new ConcurrentHashMap<Long, IoSession>();
     
@@ -50,6 +53,31 @@ public abstract class AbstractIoService implements IoService {
      * Placeholder for storing all the listeners added
      */
     private final List<IoServiceListener> listeners = new CopyOnWriteArrayList<IoServiceListener>(); 
+    
+    /**
+     * The Service states
+     */
+    protected enum ServiceState {
+        /** Initial state */
+        NONE,
+        /** The service has been created */
+        CREATED,
+        /** The service is started */
+        ACTIVE,
+        /** The service has been suspended */
+        SUSPENDED,
+        /** The service is being stopped */
+        DISPOSING,
+        /** The service is stopped */
+        DISPOSED
+    }
+    
+    /**
+     * Create an AbstractIoService
+     */
+    protected AbstractIoService() {
+        state = ServiceState.NONE;
+    }
 
     @Override
     public Map<Long, IoSession> getManagedSessions() {
@@ -108,5 +136,82 @@ public abstract class AbstractIoService implements IoService {
         */
 
         this.handler = handler;
+    }
+    
+    /**
+     * @return true if the IoService is active
+     */
+    public boolean isActive() {
+        return state == ServiceState.ACTIVE;
+    }
+    
+    /**
+     * @return true if the IoService is being disposed
+     */
+    public boolean isDisposing() {
+        return state == ServiceState.DISPOSING;
+    }
+    
+    /**
+     * @return true if the IoService is disposed
+     */
+    public boolean isDisposed() {
+        return state == ServiceState.DISPOSED;
+    }
+    
+    /**
+     * @return true if the IoService is suspended
+     */
+    public boolean isSuspended() {
+        return state == ServiceState.SUSPENDED;
+    }
+    
+    /**
+     * @return true if the IoService is created
+     */
+    public boolean isCreated() {
+        return state == ServiceState.CREATED;
+    }
+    
+    /**
+     * Sets the IoService state to CREATED.
+     */
+    protected void setCreated() {
+        state = ServiceState.CREATED;
+    }
+    
+    /**
+     * Sets the IoService state to ACTIVE.
+     */
+    protected void setActive() {
+        state = ServiceState.ACTIVE;
+    }
+    
+    /**
+     * Sets the IoService state to DISPOSED.
+     */
+    protected void setDisposed() {
+        state = ServiceState.DISPOSED;
+    }
+    
+    /**
+     * Sets the IoService state to DISPOSING.
+     */
+    protected void setDisposing() {
+        state = ServiceState.DISPOSING;
+    }
+    
+    /**
+     * Sets the IoService state to SUSPENDED.
+     */
+    protected void setSuspended() {
+        state = ServiceState.SUSPENDED;
+    }
+    
+    /**
+     * Initialize the IoService state
+     */
+    protected void initState() {
+        state = ServiceState.NONE;
     }
 }

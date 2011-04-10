@@ -27,5 +27,10 @@ import org.apache.mina.transport.tcp.AbstractTcpClient;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class NioTcpClient extends AbstractTcpClient {
-
+    /**
+     * Create a new instance of NioTcpClient
+     */
+    public NioTcpClient() {
+        super();
+    }
 }

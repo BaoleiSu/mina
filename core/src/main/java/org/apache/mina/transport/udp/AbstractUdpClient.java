@@ -21,6 +21,16 @@ package org.apache.mina.transport.udp;
 
 import org.apache.mina.service.client.AbstractIoClient;
 
-public class AbstractUdpClient extends AbstractIoClient
-{
+/**
+ * TODO
+ * 
+ * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ */
+public class AbstractUdpClient extends AbstractIoClient{
+    /**
+     * Create an new AbsractUdpClient instance
+     */
+    protected AbstractUdpClient() {
+        super();
+    }
 }
