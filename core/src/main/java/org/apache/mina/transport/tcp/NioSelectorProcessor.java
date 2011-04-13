@@ -57,8 +57,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
     private Logger log;
 
-    // Object[] is {ServerSocketChannel,IoServer}
-    private Map<SocketAddress, Object[]> serverSocketChannels = new ConcurrentHashMap<SocketAddress,Object[]>();
+    private Map<SocketAddress, ServerSocketChannel> serverSocketChannels = new ConcurrentHashMap<SocketAddress,ServerSocketChannel>();
 
     public NioSelectorProcessor(String name, SelectorStrategy strategy) {
         this.strategy = strategy;
@@ -68,7 +67,8 @@ public class NioSelectorProcessor implements SelectorProcessor {
     private Selector selector;
 
     // new binded server to add to the selector
-    private final Queue<ServerSocketChannel> serversToAdd = new ConcurrentLinkedQueue<ServerSocketChannel>();
+    // {ServerSocketChannel, IoServer}
+    private final Queue<Object[]> serversToAdd = new ConcurrentLinkedQueue<Object[]>();
 
     // server to remove of the selector
     private final Queue<ServerSocketChannel> serversToRemove = new ConcurrentLinkedQueue<ServerSocketChannel>();
@@ -84,9 +84,9 @@ public class NioSelectorProcessor implements SelectorProcessor {
      * 
      * @param serverChannel
      */
-    private void add(ServerSocketChannel serverChannel) {
-        log.debug("adding a server channel " + serverChannel);
-        serversToAdd.add(serverChannel);
+    private void add(ServerSocketChannel serverChannel, IoServer server) {
+        log.debug("adding a server channel {} for server {}", serverChannel,server);
+        serversToAdd.add(new Object[]{serverChannel,server});
         wakeupWorker();
     }
 
@@ -112,13 +112,13 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
         serverSocketChannel.socket().bind(address);
         serverSocketChannel.configureBlocking(false);
-        serverSocketChannels.put(address, new Object[]{serverSocketChannel,server});
-        add(serverSocketChannel);
+        serverSocketChannels.put(address, serverSocketChannel);
+        add(serverSocketChannel, server);
     }
 
     @Override
     public void unbind(SocketAddress address) throws IOException {
-        ServerSocketChannel channel = (ServerSocketChannel)serverSocketChannels.get(address)[0];
+        ServerSocketChannel channel = serverSocketChannels.get(address);
         channel.socket().close();
         channel.close();
         serverSocketChannels.remove(channel);
@@ -129,6 +129,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
     @Override
     public void createSession(IoService service, Object clientSocket) {
+        log.debug("create session");
         SocketChannel socketChannel = (SocketChannel) clientSocket;
         NioSocketSession session = new NioSocketSession((NioTcpServer) service, socketChannel);
         // TODO : configure & register
@@ -173,9 +174,10 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     // pop new server sockets for accepting
                     if (serversToAdd.size() > 0) {
                         while (!serversToAdd.isEmpty()) {
-                            ServerSocketChannel channel = serversToAdd.poll();
+                            Object[] tmp = serversToAdd.poll();
+                            ServerSocketChannel channel = (ServerSocketChannel)tmp[0];
                             SelectionKey key = channel.register(selector, SelectionKey.OP_ACCEPT);
-                            key.attach(channel);
+                            key.attach(tmp);
                         }
                     }
 

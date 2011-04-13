@@ -19,7 +19,8 @@
  */
 package org.apache.mina.transport.tcp;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
 import org.apache.mina.CloseFuture;
@@ -35,22 +36,48 @@ import org.apache.mina.transport.tcp.nio.NioTcpServer;
  */
 public class NioSocketSession extends AbstractIoSession {
     
+    private SocketChannel channel;
+    
     NioSocketSession(NioTcpServer service,SocketChannel channel) {
         super(service);
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public SocketAddress getRemoteAddress() {
-        // TODO Auto-generated method stub
-        return null;
+    public InetSocketAddress getRemoteAddress() {
+        if (channel == null) {
+            return null;
+        }
+        Socket socket = channel.socket();
+        
+        if (socket == null) {
+            return null;
+        }
+
+        return (InetSocketAddress) socket.getRemoteSocketAddress();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public SocketAddress getLocalAddress() {
-        // TODO Auto-generated method stub
-        return null;
+    public InetSocketAddress getLocalAddress() {
+        if ( channel == null ) {
+            return null;
+        }
+        
+        Socket socket = channel.socket();
+        
+        if ( socket == null ) {
+            return null;
+        }
+        
+        return (InetSocketAddress) socket.getLocalSocketAddress();
     }
+
 
     @Override
     public boolean isConnected() {
