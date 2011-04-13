@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO
+ * This class implements a TCP NIO based server.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */

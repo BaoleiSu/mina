@@ -64,16 +64,16 @@ public class NioSelectorProcessor implements SelectorProcessor {
     private Selector selector;
 
     // new binded server to add to the selector
-    private final Queue<ServerSocketChannel> serverToAdd = new ConcurrentLinkedQueue<ServerSocketChannel>();
+    private final Queue<ServerSocketChannel> serversToAdd = new ConcurrentLinkedQueue<ServerSocketChannel>();
 
     // server to remove of the selector
-    private final Queue<ServerSocketChannel> serverToRemove = new ConcurrentLinkedQueue<ServerSocketChannel>();
+    private final Queue<ServerSocketChannel> serversToRemove = new ConcurrentLinkedQueue<ServerSocketChannel>();
 
     // new session freshly accepted, placed here for being added to the selector
-    private final Queue<IoSession> sessionToConnect = new ConcurrentLinkedQueue<IoSession>();
+    private final Queue<IoSession> sessionsToConnect = new ConcurrentLinkedQueue<IoSession>();
 
     // session to be removed of the selector
-    private final Queue<IoSession> sessionToClose = new ConcurrentLinkedQueue<IoSession>();
+    private final Queue<IoSession> sessionsToClose = new ConcurrentLinkedQueue<IoSession>();
 
     /**
      * Add a bound server channel for starting accepting new client connections.
@@ -82,7 +82,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
      */
     public void add(ServerSocketChannel serverChannel) {
         log.debug("adding a server channel " + serverChannel);
-        serverToAdd.add(serverChannel);
+        serversToAdd.add(serverChannel);
         wakeupWorker();
     }
 
@@ -119,7 +119,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
         channel.close();
         serverSocketChannels.remove(channel);
         log.debug("removing a server channel " + channel);
-        serverToRemove.add(channel);
+        serversToRemove.add(channel);
         wakeupWorker();
     }
 
@@ -129,6 +129,10 @@ public class NioSelectorProcessor implements SelectorProcessor {
         
     }
 
+    /**
+     * The worker processing incoming session creation and destruction requests.
+     * It will also bind new servers.
+     */
     private class SelectorWorker extends Thread {
         // map for finding the keys associated with a given server
         private Map<ServerSocketChannel, SelectionKey> serverKey = new HashMap<ServerSocketChannel, SelectionKey>();
@@ -148,10 +152,11 @@ public class NioSelectorProcessor implements SelectorProcessor {
             for (;;) {
                 try {
                     // pop server sockets for removing
-                    if (serverToRemove.size() > 0) {
-                        while (!serverToRemove.isEmpty()) {
-                            ServerSocketChannel channel = serverToRemove.poll();
+                    if (serversToRemove.size() > 0) {
+                        while (!serversToRemove.isEmpty()) {
+                            ServerSocketChannel channel = serversToRemove.poll();
                             SelectionKey key = serverKey.remove(channel);
+                            
                             if (key == null) {
                                 log.error("The server socket was already removed of the selector");
                             } else {
@@ -161,9 +166,9 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     }
 
                     // pop new server sockets for accepting
-                    if (serverToAdd.size() > 0) {
-                        while (!serverToAdd.isEmpty()) {
-                            ServerSocketChannel channel = serverToAdd.poll();
+                    if (serversToAdd.size() > 0) {
+                        while (!serversToAdd.isEmpty()) {
+                            ServerSocketChannel channel = serversToAdd.poll();
                             SelectionKey key = channel.register(selector,
                                     SelectionKey.OP_ACCEPT);
                             key.attach(channel);
@@ -172,7 +177,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     
                     log.debug("selecting...");
                     int readyCount = selector.select(SELECT_TIMEOUT);
-                    log.debug("... done selecting : " + readyCount);
+                    log.debug("... done selecting : {}", readyCount);
 
                     if (readyCount > 0) {
                         // process selected keys
