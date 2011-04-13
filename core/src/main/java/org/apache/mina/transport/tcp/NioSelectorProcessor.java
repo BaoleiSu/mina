@@ -22,6 +22,7 @@ package org.apache.mina.transport.tcp;
 
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -59,12 +60,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
     private Map<SocketAddress, ServerSocketChannel> serverSocketChannels = new ConcurrentHashMap<SocketAddress, ServerSocketChannel>();
 
-    public NioSelectorProcessor(String name, SelectorStrategy strategy) {
-        this.strategy = strategy;
-        this.log = LoggerFactory.getLogger("SelectorProcessor[" + name + "]");
-    }
-
-    private Selector selector;
+    private ByteBuffer readBuffer;
 
     // new binded server to add to the selector
     // {ServerSocketChannel, IoServer}
@@ -78,6 +74,16 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
     // session to be removed of the selector
     private final Queue<NioSocketSession> sessionsToClose = new ConcurrentLinkedQueue<NioSocketSession>();
+
+    private Selector selector;
+
+    public NioSelectorProcessor(String name, SelectorStrategy strategy) {
+        this.strategy = strategy;
+        this.log = LoggerFactory.getLogger("SelectorProcessor[" + name + "]");
+
+        // TODO : configurable parameter
+        readBuffer = ByteBuffer.allocate(1024);
+    }
 
     /**
      * Add a bound server channel for starting accepting new client connections.
@@ -155,6 +161,9 @@ public class NioSelectorProcessor implements SelectorProcessor {
         // map for finding the keys associated with a given server
         private Map<ServerSocketChannel, SelectionKey> serverKey = new HashMap<ServerSocketChannel, SelectionKey>();
 
+        // map for fining keys associated with a given session
+        private Map<NioSocketSession, SelectionKey> sessionKey = new HashMap<NioSocketSession, SelectionKey>();
+
         @Override
         public void run() {
             if (selector == null) {
@@ -197,9 +206,25 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     if (sessionsToConnect.size() > 0) {
                         while (!sessionsToConnect.isEmpty()) {
                             NioSocketSession session = sessionsToConnect.poll();
-                            session.getSocketChannel().register(selector, SelectionKey.OP_READ);
+                            SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_READ);
+                            key.attach(session);
+                            sessionKey.put(session, key);
                         }
                     }
+
+                    // pop session for close
+                    if (sessionsToClose.size() > 0) {
+                        while (!sessionsToClose.isEmpty()) {
+                            NioSocketSession session = sessionsToClose.poll();
+
+                            SelectionKey key = sessionKey.remove(session);
+                            key.cancel();
+
+                            // needed ?
+                            session.getSocketChannel().close();
+                        }
+                    }
+
                     log.debug("selecting...");
                     int readyCount = selector.select(SELECT_TIMEOUT);
                     log.debug("... done selecting : {}", readyCount);
@@ -220,7 +245,21 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                             if (key.isReadable()) {
                                 log.debug("readable client {}", key);
-                                // TODO
+                                NioSocketSession session = (NioSocketSession) key.attachment();
+                                SocketChannel channel = session.getSocketChannel();
+                                int readCount = channel.read(readBuffer);
+                                log.debug("read {} bytes", readCount);
+                                if (readCount < 0) {
+                                    // session closed by the remote peer
+                                    log.debug("session closed by the remote peer");
+                                    sessionsToClose.add(session);
+                                } else {
+                                    // we have read some data
+                                    // TODO : push to the chain
+
+                                    readBuffer.rewind();
+                                }
+
                             }
 
                             if (key.isAcceptable()) {
