@@ -75,7 +75,7 @@ public class NioTcpServer extends AbstractTcpServer {
                 addresses.add(address);
                 NioSelectorProcessor processor = (NioSelectorProcessor) strategy
                         .getSelectorForBindNewAddress();
-                processor.bindAndAcceptAddress(address);
+                processor.bindAndAcceptAddress(this,address);
             }
         }
     }

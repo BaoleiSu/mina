@@ -23,6 +23,9 @@ package org.apache.mina.service;
 import java.io.IOException;
 import java.net.SocketAddress;
 
+import org.apache.mina.IoServer;
+import org.apache.mina.IoService;
+
 /**
  * A processor in charge of a group of client session and server sockets.
  *
@@ -33,16 +36,17 @@ public interface SelectorProcessor {
     
     /**
      * create a session for a freshly accepted client socket
+     * @param service
      * @param clientChannel
      */
-    void createSession(Object clientSocket);
+    void createSession(IoService service,Object clientSocket);
     
     /**
      * Bind and start processing this new server address
      * @param address local address to bind
      * @throws IOException exception thrown if any problem occurs while binding
      */
-    void bindAndAcceptAddress(SocketAddress address) throws IOException;
+    void bindAndAcceptAddress(IoServer server, SocketAddress address) throws IOException;
     
     /**
      * Stop processing and unbind this server address
