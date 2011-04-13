@@ -40,9 +40,12 @@ public class NioSocketSession extends AbstractIoSession {
     
     NioSocketSession(NioTcpServer service,SocketChannel channel) {
         super(service);
-        
+        this.channel = channel;
     }
 
+    public SocketChannel getSocketChannel() {
+        return channel;
+    }
     /**
      * {@inheritDoc}
      */
