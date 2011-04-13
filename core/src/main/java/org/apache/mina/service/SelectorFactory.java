@@ -19,21 +19,20 @@
  */
 package org.apache.mina.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * A factory used by {@link SelectorStrategy} for instantiating selectors when needed.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
- *
  */
 public class SelectorFactory {
-    
+    /** A logger for this class */
     static final Logger LOG = LoggerFactory.getLogger(SelectorFactory.class);
         
     private Constructor<? extends SelectorProcessor> constructor;
@@ -52,6 +51,9 @@ public class SelectorFactory {
         }   
     }
     
+    /**
+     * 
+     */
     public SelectorProcessor getNewSelector(String name,SelectorStrategy strategy) {
         try {
             return (SelectorProcessor)constructor.newInstance(name,strategy);

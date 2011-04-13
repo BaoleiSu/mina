@@ -31,9 +31,13 @@ import java.net.SocketAddress;
  *
  */
 public class OneThreadSelectorStrategy implements SelectorStrategy {
-
+    /** The processor in charge of the messages processing */
     private SelectorProcessor processor;
     
+    /**
+     * Creates an instance of the OneThreadSelectorStrategy class
+     * @param selectorFactory The Selector factory to use to create the processor
+     */
     public OneThreadSelectorStrategy(SelectorFactory selectorFactory) {
         this.processor = selectorFactory.getNewSelector("uniqueSelector", this);
     }
