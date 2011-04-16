@@ -70,10 +70,10 @@ public class NioSelectorProcessor implements SelectorProcessor {
     private final Queue<ServerSocketChannel> serversToRemove = new ConcurrentLinkedQueue<ServerSocketChannel>();
 
     // new session freshly accepted, placed here for being added to the selector
-    private final Queue<NioSocketSession> sessionsToConnect = new ConcurrentLinkedQueue<NioSocketSession>();
+    private final Queue<NioTcpSession> sessionsToConnect = new ConcurrentLinkedQueue<NioTcpSession>();
 
     // session to be removed of the selector
-    private final Queue<NioSocketSession> sessionsToClose = new ConcurrentLinkedQueue<NioSocketSession>();
+    private final Queue<NioTcpSession> sessionsToClose = new ConcurrentLinkedQueue<NioTcpSession>();
 
     private Selector selector;
 
@@ -137,7 +137,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
     public void createSession(IoService service, Object clientSocket) {
         log.debug("create session");
         SocketChannel socketChannel = (SocketChannel) clientSocket;
-        NioSocketSession session = new NioSocketSession((NioTcpServer) service, socketChannel);
+        NioTcpSession session = new NioTcpSession((NioTcpServer) service, socketChannel);
 
         // TODO : configure
         try {
@@ -162,7 +162,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
         private Map<ServerSocketChannel, SelectionKey> serverKey = new HashMap<ServerSocketChannel, SelectionKey>();
 
         // map for fining keys associated with a given session
-        private Map<NioSocketSession, SelectionKey> sessionKey = new HashMap<NioSocketSession, SelectionKey>();
+        private Map<NioTcpSession, SelectionKey> sessionKey = new HashMap<NioTcpSession, SelectionKey>();
 
         @Override
         public void run() {
@@ -205,7 +205,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     // pop new session for starting read/write
                     if (sessionsToConnect.size() > 0) {
                         while (!sessionsToConnect.isEmpty()) {
-                            NioSocketSession session = sessionsToConnect.poll();
+                            NioTcpSession session = sessionsToConnect.poll();
                             SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_READ);
                             key.attach(session);
                             sessionKey.put(session, key);
@@ -215,7 +215,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     // pop session for close
                     if (sessionsToClose.size() > 0) {
                         while (!sessionsToClose.isEmpty()) {
-                            NioSocketSession session = sessionsToClose.poll();
+                            NioTcpSession session = sessionsToClose.poll();
 
                             SelectionKey key = sessionKey.remove(session);
                             key.cancel();
@@ -245,7 +245,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                             if (key.isReadable()) {
                                 log.debug("readable client {}", key);
-                                NioSocketSession session = (NioSocketSession) key.attachment();
+                                NioTcpSession session = (NioTcpSession) key.attachment();
                                 SocketChannel channel = session.getSocketChannel();
                                 int readCount = channel.read(readBuffer);
                                 log.debug("read {} bytes", readCount);

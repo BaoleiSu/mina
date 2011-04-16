@@ -34,11 +34,11 @@ import org.apache.mina.transport.tcp.nio.NioTcpServer;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  *
  */
-public class NioSocketSession extends AbstractIoSession {
+public class NioTcpSession extends AbstractIoSession {
     
     private SocketChannel channel;
     
-    NioSocketSession(NioTcpServer service,SocketChannel channel) {
+    NioTcpSession(NioTcpServer service,SocketChannel channel) {
         super(service);
         this.channel = channel;
     }
