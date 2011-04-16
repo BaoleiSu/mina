@@ -66,6 +66,9 @@ public abstract class AbstractIoSession implements IoSession {
     /** unique identifier generator */
     private static final AtomicLong NEXT_ID = new AtomicLong(0);
 
+    
+    protected SessionState state;
+    
     /**
      * Create an {@link IoSession} with a unique identifier (
      * {@link IoSession#getId()}) and an associated {@link IoService}
@@ -79,8 +82,12 @@ public abstract class AbstractIoSession implements IoSession {
         creationTime = System.currentTimeMillis();
         this.service = service;
         LOG.debug("Created new session with id : {}", id);
+        this.state=SessionState.CREATED;
     }
 
+    public SessionState getState() {
+        return state;
+    }
     /**
      * {@inheritDoc}
      */

@@ -46,6 +46,7 @@ public class NioTcpSession extends AbstractIoSession {
     public SocketChannel getSocketChannel() {
         return channel;
     }
+    
     /**
      * {@inheritDoc}
      */
@@ -141,5 +142,11 @@ public class NioTcpSession extends AbstractIoSession {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
+    void setConnected() {
+        if (getState() != SessionState.CREATED) {
+            throw new RuntimeException("Trying to open a non created session");
+        }
+        state = SessionState.CONNECTED;    
+    }
 }

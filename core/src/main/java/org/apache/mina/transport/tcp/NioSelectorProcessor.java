@@ -209,6 +209,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                             SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_READ);
                             key.attach(session);
                             sessionKey.put(session, key);
+                            session.setConnected();
                         }
                     }
 

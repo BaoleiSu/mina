@@ -239,4 +239,16 @@ public interface IoSession {
      * @return the set of names of all user-defined attributes.
      */
     Set<Object> getAttributeNames();
+    
+    
+    SessionState getState();
+    
+    /**
+     * State of a {@link IoSession}
+     * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+     *
+     */
+    public enum SessionState {
+        CREATED,CONNECTED,CLOSING,CLOSED
+    }
 }
