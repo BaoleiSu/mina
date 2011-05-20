@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.mina.IoService;
 import org.apache.mina.IoSession;
+import org.apache.mina.WriteFuture;
+import org.apache.mina.service.SelectorProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,16 +67,18 @@ public abstract class AbstractIoSession implements IoSession {
 
     /** unique identifier generator */
     private static final AtomicLong NEXT_ID = new AtomicLong(0);
-
     
+    protected Object stateMonitor = new Object();
     protected SessionState state;
+    
+    /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
+    private WriteQueue writeQueue = new DefaultWriteQueue();
     
     /**
      * Create an {@link IoSession} with a unique identifier (
      * {@link IoSession#getId()}) and an associated {@link IoService}
      * 
-     * @param the
-     *            service this session is associated with
+     * @param service the service this session is associated with
      */
     public AbstractIoSession(IoService service) {
         // generated a unique id
@@ -82,7 +86,9 @@ public abstract class AbstractIoSession implements IoSession {
         creationTime = System.currentTimeMillis();
         this.service = service;
         LOG.debug("Created new session with id : {}", id);
-        this.state=SessionState.CREATED;
+        synchronized (stateMonitor) {
+            this.state=SessionState.CREATED;
+		}
     }
 
     public SessionState getState() {
@@ -190,5 +196,27 @@ public abstract class AbstractIoSession implements IoSession {
     @Override
     public Set<Object> getAttributeNames() {
         return attributes.keySet();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(Object message) {
+    	if (state == SessionState.CLOSED || state == SessionState.CLOSING) {
+    		// TODO actually we just just shallow the message if the session is closed/closing
+    		LOG.error("writing to closed or cloing session");
+    		return;
+    	}
+    	writeQueue.add(new DefaultWriteRequest(message));
+    	
+    	// mark as interested to write
+    }
+    
+    @Override
+    public WriteFuture writeWithFuture(Object message) {
+    	write(message);
+    	// TODO implements WriteFuture
+    	return null;
     }
 }

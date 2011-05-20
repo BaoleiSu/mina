@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.mina.IoServer;
 import org.apache.mina.IoService;
+import org.apache.mina.IoSession;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.service.SelectorStrategy;
 import org.apache.mina.transport.tcp.nio.NioTcpServer;
@@ -161,7 +162,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
         // map for finding the keys associated with a given server
         private Map<ServerSocketChannel, SelectionKey> serverKey = new HashMap<ServerSocketChannel, SelectionKey>();
 
-        // map for fining keys associated with a given session
+        // map for finding keys associated with a given session
         private Map<NioTcpSession, SelectionKey> sessionKey = new HashMap<NioTcpSession, SelectionKey>();
 
         @Override
@@ -291,4 +292,10 @@ public class NioSelectorProcessor implements SelectorProcessor {
             }
         }
     }
+
+	@Override
+	public void flush(IoSession session) {
+		// add the session to the list of session to be registered for writing
+		// wake the selector
+	}
 }

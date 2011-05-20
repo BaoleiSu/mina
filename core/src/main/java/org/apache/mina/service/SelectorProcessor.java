@@ -25,6 +25,7 @@ import java.net.SocketAddress;
 
 import org.apache.mina.IoServer;
 import org.apache.mina.IoService;
+import org.apache.mina.IoSession;
 
 /**
  * A processor in charge of a group of client session and server sockets.
@@ -54,4 +55,10 @@ public interface SelectorProcessor {
      * @throws IOException exception thrown if any problem occurs while unbinding
      */
     void unbind(SocketAddress address) throws IOException;
+    
+    /**
+     * Schedule a session for flushing, to be called after a session write.
+     * @param session the session to flush
+     */
+    void flush(IoSession session);
 }

@@ -22,6 +22,8 @@ package org.apache.mina;
 import java.net.SocketAddress;
 import java.util.Set;
 
+import org.apache.mina.service.SelectorProcessor;
+
 /**
  * A handle which represents a connection between two end-points regardless of
  * transport types.
@@ -49,206 +51,233 @@ import java.util.Set;
  */
 public interface IoSession {
 
-    /**
-     * The unique identifier of this session.
-     * 
-     * @return the session's unique identifier 
-     */
-    long getId();
+	/**
+	 * The unique identifier of this session.
+	 * 
+	 * @return the session's unique identifier
+	 */
+	long getId();
 
-    /* ADDRESSES */
+	/* ADDRESSES */
 
-    /**
-     * Returns the socket address of remote peer.
-     * 
-     * @return the remote socket address
-     */
-    SocketAddress getRemoteAddress();
+	/**
+	 * Returns the socket address of remote peer.
+	 * 
+	 * @return the remote socket address
+	 */
+	SocketAddress getRemoteAddress();
 
-    /**
-     * Gets the local address of the local peer.
-     * 
-     * @return the socket address of local machine which is associated with this
-     * session.
-     */
-    SocketAddress getLocalAddress();
+	/**
+	 * Gets the local address of the local peer.
+	 * 
+	 * @return the socket address of local machine which is associated with this
+	 *         session.
+	 */
+	SocketAddress getLocalAddress();
 
-    /**
-     * Gets the service this session is attached to.
-     * 
-     * @return the {@link IoService} which provides {@link IoSession} to this
-     * session.
-     */
-    IoService getService();
+	/**
+	 * Gets the service this session is attached to.
+	 * 
+	 * @return the {@link IoService} which provides {@link IoSession} to this
+	 *         session.
+	 */
+	IoService getService();
 
-    /* READ / WRITE / CLOSE */
-    /**
-     * Tells if the session is currently connected and able to process incoming
-     * requests and to send outgoing responses.
-     * 
-     * @return <code>true</code> if this session is connected with remote peer.
-     */
-    boolean isConnected();
+	/* READ / WRITE / CLOSE */
+	/**
+	 * Tells if the session is currently connected and able to process incoming
+	 * requests and to send outgoing responses.
+	 * 
+	 * @return <code>true</code> if this session is connected with remote peer.
+	 */
+	boolean isConnected();
 
-    /**
-     * Tells if the session is being closed, but is not yet in Closed state.
-     * 
-     * @return <code>true</tt> if and only if this session is being closed
-     * (but not disconnected yet) or is closed.
-     */
-    boolean isClosing();
+	/**
+	 * Tells if the session is being closed, but is not yet in Closed state.
+	 * 
+	 * @return <code>true</tt> if and only if this session is being closed
+	 * (but not disconnected yet) or is closed.
+	 */
+	boolean isClosing();
 
-    /**
-     * Closes this session immediately or after all queued write requests are
-     * flushed. This operation is asynchronous. Wait for the returned
-     * {@link CloseFuture} if you want to wait for the session actually closed.
-     * Once this method has been called, no incoming request will be accepted.
-     * 
-     * @param immediately {@code true} to close this session immediately. {@code false}
-     * to close this session after all queued write requests are flushed.
-     * @return A {@link CloseFuture} that will contains the session's state
-     */
-    CloseFuture close(boolean immediately);
+	/**
+	 * Closes this session immediately or after all queued write requests are
+	 * flushed. This operation is asynchronous. Wait for the returned
+	 * {@link CloseFuture} if you want to wait for the session actually closed.
+	 * Once this method has been called, no incoming request will be accepted.
+	 * 
+	 * @param immediately
+	 *            {@code true} to close this session immediately. {@code false}
+	 *            to close this session after all queued write requests are
+	 *            flushed.
+	 * @return A {@link CloseFuture} that will contains the session's state
+	 */
+	CloseFuture close(boolean immediately);
 
-    /* READ/WRITE PAUSE MANAGEMENT */
-    /**
-     * Suspends read operations for this session.
-     */
-    void suspendRead();
+	/* READ/WRITE PAUSE MANAGEMENT */
+	/**
+	 * Suspends read operations for this session.
+	 */
+	void suspendRead();
 
-    /**
-     * Suspends write operations for this session.
-     */
-    void suspendWrite();
+	/**
+	 * Suspends write operations for this session.
+	 */
+	void suspendWrite();
 
-    /**
-     * Resumes read operations for this session.
-     */
-    void resumeRead();
+	/**
+	 * Resumes read operations for this session.
+	 */
+	void resumeRead();
 
-    /**
-     * Resumes write operations for this session.
-     */
-    void resumeWrite();
+	/**
+	 * Resumes write operations for this session.
+	 */
+	void resumeWrite();
 
-    /**
-     * Is read operation is suspended for this session.
-     * 
-     * @return <code>true</code> if suspended
-     */
-    boolean isReadSuspended();
+	/**
+	 * Is read operation is suspended for this session.
+	 * 
+	 * @return <code>true</code> if suspended
+	 */
+	boolean isReadSuspended();
 
-    /**
-     * Is write operation is suspended for this session.
-     * 
-     * @return <code>true</code> if suspended
-     */
-    boolean isWriteSuspended();
+	/**
+	 * Is write operation is suspended for this session.
+	 * 
+	 * @return <code>true</code> if suspended
+	 */
+	boolean isWriteSuspended();
 
-    /* BASIC STATS */
-    /**
-     * Gets the total number of bytes read for this session since it was created.
-     * 
-     * Returns the total number of bytes which were read from this session.
-     */
-    long getReadBytes();
+	/* BASIC STATS */
+	/**
+	 * Gets the total number of bytes read for this session since it was
+	 * created.
+	 * 
+	 * Returns the total number of bytes which were read from this session.
+	 */
+	long getReadBytes();
 
-    /**
-     * Gets the total number of bytes written for this session since it was created.
-     * 
-     * @return the total number of bytes which were written to this session.
-     */
-    long getWrittenBytes();
+	/**
+	 * Gets the total number of bytes written for this session since it was
+	 * created.
+	 * 
+	 * @return the total number of bytes which were written to this session.
+	 */
+	long getWrittenBytes();
 
-    /* IDLE management */
-    /**
-     * Gets the session configuration, it where the idle timeout are set and
-     * other transport specific configuration.
-     * 
-     * @return the session's configuration
-     */
-    IoSessionConfig getConfig();
+	/* IDLE management */
+	/**
+	 * Gets the session configuration, it where the idle timeout are set and
+	 * other transport specific configuration.
+	 * 
+	 * @return the session's configuration
+	 */
+	IoSessionConfig getConfig();
 
-    /**
-     * The session's creation time.
-     * 
-     * @return the session's creation time in milliseconds
-     */
-    long getCreationTime();
+	/**
+	 * The session's creation time.
+	 * 
+	 * @return the session's creation time in milliseconds
+	 */
+	long getCreationTime();
 
-    /**
-     * Returns the time in millisecond when I/O occurred lastly (either read or write).
-     * 
-     * @return the time of the last read or write done for this session
-     */
-    long getLastIoTime();
+	/**
+	 * Returns the time in millisecond when I/O occurred lastly (either read or
+	 * write).
+	 * 
+	 * @return the time of the last read or write done for this session
+	 */
+	long getLastIoTime();
 
-    /**
-     * Returns the time in millisecond when the last I/O read occurred.
-     * 
-     * Returns the time in millisecond when read operation occurred lastly.
-     */
-    long getLastReadTime();
+	/**
+	 * Returns the time in millisecond when the last I/O read occurred.
+	 * 
+	 * Returns the time in millisecond when read operation occurred lastly.
+	 */
+	long getLastReadTime();
 
-    /**
-     * Returns the time in millisecond when the last I/O write occurred.
-     * 
-     * Returns the time in millisecond when write operation occurred lastly.
-     */
-    long getLastWriteTime();
+	/**
+	 * Returns the time in millisecond when the last I/O write occurred.
+	 * 
+	 * Returns the time in millisecond when write operation occurred lastly.
+	 */
+	long getLastWriteTime();
 
-    /* Session context management */
-    /**
-     * Returns the value of the user-defined attribute for this session.
-     * 
-     * @param name the attribute's name
-     * @return <tt>null</tt> if there is no attribute with the specified name
-     */
-    Object getAttribute(Object name);
+	/* Session context management */
+	/**
+	 * Returns the value of the user-defined attribute for this session.
+	 * 
+	 * @param name
+	 *            the attribute's name
+	 * @return <tt>null</tt> if there is no attribute with the specified name
+	 */
+	Object getAttribute(Object name);
 
-    /**
-     * Sets a user-defined attribute.
-     * 
-     * @param name the attribute's name
-     * @param value the attribute's value
-     * @return The old attribute's value. <tt>null</tt> if there is no previous value
-     * or if the value is null
-     */
-    Object setAttribute(Object name, Object value);
+	/**
+	 * Sets a user-defined attribute.
+	 * 
+	 * @param name
+	 *            the attribute's name
+	 * @param value
+	 *            the attribute's value
+	 * @return The old attribute's value. <tt>null</tt> if there is no previous
+	 *         value or if the value is null
+	 */
+	Object setAttribute(Object name, Object value);
 
-    /**
-     * Removes a user-defined attribute with the specified name.
-     * 
-     * @param name the attribute's name
-     * @return The old attribute's value. <tt>null</tt> if not found or if the 
-     * attribute had no value
-     */
-    Object removeAttribute(Object name);
+	/**
+	 * Removes a user-defined attribute with the specified name.
+	 * 
+	 * @param name
+	 *            the attribute's name
+	 * @return The old attribute's value. <tt>null</tt> if not found or if the
+	 *         attribute had no value
+	 */
+	Object removeAttribute(Object name);
 
-    /**
-     * Tells if the session has an attached attribute.
-     * 
-     * @return <tt>true</tt> if this session contains the attribute with the
-     * specified <tt>name</tt>.
-     */
-    boolean containsAttribute(Object name);
+	/**
+	 * Tells if the session has an attached attribute.
+	 * 
+	 * @return <tt>true</tt> if this session contains the attribute with the
+	 *         specified <tt>name</tt>.
+	 */
+	boolean containsAttribute(Object name);
 
-    /**
-     * Gets the set of attributes stored within the session.
-     * 
-     * @return the set of names of all user-defined attributes.
-     */
-    Set<Object> getAttributeNames();
-    
-    
-    SessionState getState();
-    
-    /**
-     * State of a {@link IoSession}
-     * @author <a href="http://mina.apache.org">Apache MINA Project</a>
-     *
-     */
-    public enum SessionState {
-        CREATED,CONNECTED,CLOSING,CLOSED
-    }
+	/**
+	 * Gets the set of attributes stored within the session.
+	 * 
+	 * @return the set of names of all user-defined attributes.
+	 */
+	Set<Object> getAttributeNames();
+
+	SessionState getState();
+
+	/**
+	 * State of a {@link IoSession}
+	 * 
+	 * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+	 * 
+	 */
+	public enum SessionState {
+		CREATED, CONNECTED, CLOSING, CLOSED
+	}
+
+	/* SESSION WRITING */
+	/**
+	 * Enqueue a message for writing. This method wont block ! The message will
+	 * by asynchronously processed by the filter chain and wrote to socket by
+	 * the {@link SelectorProcessor}.
+	 * 
+	 */
+	public void write(Object message);
+
+	/**
+	 * Same as {@link IoSession#write(Object)}, but provide a
+	 * {@link WriteFuture} for tracking the completion of this write.
+	 * 
+	 * @param message the message to be processed and written
+	 * @return the {@link WriteFuture} for tracking this asynchronous operation
+	 */
+	public WriteFuture writeWithFuture(Object message);
 }
