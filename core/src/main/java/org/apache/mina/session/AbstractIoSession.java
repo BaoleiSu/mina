@@ -22,6 +22,7 @@ package org.apache.mina.session;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.mina.IoService;
@@ -50,6 +51,9 @@ public abstract class AbstractIoSession implements IoSession {
     /** The service this session is associated with */
     private final IoService service;
 
+    /** The {@link SelectorProcessor} used for handling this session writing */
+    private SelectorProcessor writeProcessor;
+    
     /** The number of bytes read since this session has been created */
     private volatile long readBytes;
 
@@ -70,6 +74,9 @@ public abstract class AbstractIoSession implements IoSession {
     
     protected Object stateMonitor = new Object();
     protected SessionState state;
+
+    /** is this session registered for being polled for write ready events */
+    AtomicBoolean registeredForWrite = new AtomicBoolean();
     
     /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
     private WriteQueue writeQueue = new DefaultWriteQueue();
@@ -210,7 +217,11 @@ public abstract class AbstractIoSession implements IoSession {
     	}
     	writeQueue.add(new DefaultWriteRequest(message));
     	
-    	// mark as interested to write
+    	// If it wasn't, we register this session as interested to write.
+    	// It's done in atomic fashion for avoiding two concurent registering.
+    	if (!registeredForWrite.getAndSet(true)) {
+    		writeProcessor.flush(this);
+    	}
     }
     
     @Override
@@ -218,5 +229,10 @@ public abstract class AbstractIoSession implements IoSession {
     	write(message);
     	// TODO implements WriteFuture
     	return null;
+    }
+    
+    @Override
+    public WriteQueue getWriteQueue() {
+    	return writeQueue;
     }
 }

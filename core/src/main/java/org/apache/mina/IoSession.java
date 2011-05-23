@@ -23,6 +23,7 @@ import java.net.SocketAddress;
 import java.util.Set;
 
 import org.apache.mina.service.SelectorProcessor;
+import org.apache.mina.session.WriteQueue;
 
 /**
  * A handle which represents a connection between two end-points regardless of
@@ -280,4 +281,10 @@ public interface IoSession {
 	 * @return the {@link WriteFuture} for tracking this asynchronous operation
 	 */
 	public WriteFuture writeWithFuture(Object message);
+	
+	/**
+	 * Get the {@link WriteQueue} of this session. The write queue contains the pending writes.
+	 * @return the write queue of this session
+	 */
+	public WriteQueue getWriteQueue();
 }
