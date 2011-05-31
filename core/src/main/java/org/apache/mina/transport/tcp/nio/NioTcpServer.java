@@ -40,8 +40,7 @@ public class NioTcpServer extends AbstractTcpServer {
     static final Logger LOG = LoggerFactory.getLogger(NioTcpServer.class);
 
     // list of bound addresses
-    private Set<SocketAddress> addresses = Collections
-            .synchronizedSet(new HashSet<SocketAddress>());
+    private Set<SocketAddress> addresses = Collections.synchronizedSet(new HashSet<SocketAddress>());
 
     // map of the created selection keys, mainly used for cancelling them.
     // private Map<SocketAddress,NioSelectorProcessor> serverSocketChannels =
@@ -66,16 +65,18 @@ public class NioTcpServer extends AbstractTcpServer {
             // check if the address is already bound
             synchronized (this) {
                 if (addresses.contains(address)) {
-                    throw new IOException("address " + address
-                            + " already bound");
+                    throw new IOException("address " + address + " already bound");
                 }
 
                 LOG.debug("binding address {}", address);
 
                 addresses.add(address);
-                NioSelectorProcessor processor = (NioSelectorProcessor) strategy
-                        .getSelectorForBindNewAddress();
-                processor.bindAndAcceptAddress(this,address);
+                NioSelectorProcessor processor = (NioSelectorProcessor) strategy.getSelectorForBindNewAddress();
+                processor.bindAndAcceptAddress(this, address);
+                if (addresses.size() == 1) {
+                    // it's the first address bound, let's fire the event
+                    fireServiceActivated();
+                }
             }
         }
     }
@@ -92,6 +93,9 @@ public class NioTcpServer extends AbstractTcpServer {
             synchronized (this) {
                 strategy.unbind(socketAddress);
                 addresses.remove(socketAddress);
+                if (addresses.isEmpty()) {
+                    fireServiceDeactivated();
+                }
             }
         }
     }

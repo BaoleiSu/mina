@@ -25,6 +25,7 @@ import java.nio.channels.SocketChannel;
 
 import org.apache.mina.CloseFuture;
 import org.apache.mina.IoSessionConfig;
+import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.session.AbstractIoSession;
 import org.apache.mina.transport.tcp.nio.NioTcpServer;
 
@@ -35,18 +36,18 @@ import org.apache.mina.transport.tcp.nio.NioTcpServer;
  *
  */
 public class NioTcpSession extends AbstractIoSession {
-    
+
     private SocketChannel channel;
-    
-    NioTcpSession(NioTcpServer service,SocketChannel channel) {
-        super(service);
+
+    NioTcpSession(NioTcpServer service, SocketChannel channel, SelectorProcessor writeProcessor) {
+        super(service, writeProcessor);
         this.channel = channel;
     }
 
     public SocketChannel getSocketChannel() {
         return channel;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -56,7 +57,7 @@ public class NioTcpSession extends AbstractIoSession {
             return null;
         }
         Socket socket = channel.socket();
-        
+
         if (socket == null) {
             return null;
         }
@@ -69,19 +70,18 @@ public class NioTcpSession extends AbstractIoSession {
      */
     @Override
     public InetSocketAddress getLocalAddress() {
-        if ( channel == null ) {
+        if (channel == null) {
             return null;
         }
-        
+
         Socket socket = channel.socket();
-        
-        if ( socket == null ) {
+
+        if (socket == null) {
             return null;
         }
-        
+
         return (InetSocketAddress) socket.getLocalSocketAddress();
     }
-
 
     @Override
     public boolean isConnected() {
@@ -104,25 +104,25 @@ public class NioTcpSession extends AbstractIoSession {
     @Override
     public void suspendRead() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void suspendWrite() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void resumeRead() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void resumeWrite() {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -147,6 +147,6 @@ public class NioTcpSession extends AbstractIoSession {
         if (getState() != SessionState.CREATED) {
             throw new RuntimeException("Trying to open a non created session");
         }
-        state = SessionState.CONNECTED;    
+        state = SessionState.CONNECTED;
     }
 }

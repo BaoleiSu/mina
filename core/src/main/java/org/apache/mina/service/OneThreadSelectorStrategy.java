@@ -22,6 +22,8 @@ package org.apache.mina.service;
 import java.io.IOException;
 import java.net.SocketAddress;
 
+import org.apache.mina.IoSession;
+
 
 /**
  * A strategy for using only one thread, for accepting and processing all
@@ -52,6 +54,11 @@ public class OneThreadSelectorStrategy implements SelectorStrategy {
         return processor;
     }
 
+    @Override
+    public SelectorProcessor getSelectorForWrite(IoSession session) {
+        return processor;
+    }
+    
     @Override
     public void unbind(SocketAddress address) throws IOException {
         processor.unbind(address);

@@ -39,6 +39,15 @@ public interface SelectorStrategy {
     SelectorProcessor getSelectorForNewSession(SelectorProcessor acceptingProcessor);
     
     /**
+     * Provide a {@link SelectorProcessor} for a {@link IoSession} which need to write data.
+     * This processor will be in charge of selecting the socket for write ready events.
+     * 
+     * @param session the session in need of writing
+     * @return the selector processor for handling this sessino write events
+     */
+    SelectorProcessor getSelectorForWrite(IoSession session);
+    
+    /**
      * Provide a {@link SelectorProcessor} for processing a newly bound address.
      * The processor will accept the incoming connections.
      * @return

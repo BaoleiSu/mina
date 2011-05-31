@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractIoService implements IoService {
     /** A logger for this class */
     static final Logger LOG = LoggerFactory.getLogger(AbstractIoService.class);
-    
+
     /** The service state */
     private ServiceState state;
-    
+
     private final Map<Long, IoSession> managedSessions = new ConcurrentHashMap<Long, IoSession>();
-    
+
     /**
      * The handler, the interface with the application part.
      */
@@ -52,8 +52,8 @@ public abstract class AbstractIoService implements IoService {
     /**
      * Placeholder for storing all the listeners added
      */
-    private final List<IoServiceListener> listeners = new CopyOnWriteArrayList<IoServiceListener>(); 
-    
+    private final List<IoServiceListener> listeners = new CopyOnWriteArrayList<IoServiceListener>();
+
     /**
      * The Service states
      */
@@ -71,7 +71,7 @@ public abstract class AbstractIoService implements IoService {
         /** The service is stopped */
         DISPOSED
     }
-    
+
     /**
      * Create an AbstractIoService
      */
@@ -90,7 +90,7 @@ public abstract class AbstractIoService implements IoService {
      */
     @Override
     public void addListener(IoServiceListener listener) {
-        if(listener != null) {
+        if (listener != null) {
             listeners.add(listener);
             return;
         }
@@ -104,11 +104,10 @@ public abstract class AbstractIoService implements IoService {
      */
     @Override
     public void removeListener(IoServiceListener listener) {
-        if(listener != null) {
-            listeners.remove(listener);    
+        if (listener != null) {
+            listeners.remove(listener);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -116,7 +115,6 @@ public abstract class AbstractIoService implements IoService {
     public final IoHandler getHandler() {
         return handler;
     }
-
 
     /**
      * {@inheritDoc}
@@ -137,81 +135,99 @@ public abstract class AbstractIoService implements IoService {
 
         this.handler = handler;
     }
-    
+
     /**
      * @return true if the IoService is active
      */
     public boolean isActive() {
         return state == ServiceState.ACTIVE;
     }
-    
+
     /**
      * @return true if the IoService is being disposed
      */
     public boolean isDisposing() {
         return state == ServiceState.DISPOSING;
     }
-    
+
     /**
      * @return true if the IoService is disposed
      */
     public boolean isDisposed() {
         return state == ServiceState.DISPOSED;
     }
-    
+
     /**
      * @return true if the IoService is suspended
      */
     public boolean isSuspended() {
         return state == ServiceState.SUSPENDED;
     }
-    
+
     /**
      * @return true if the IoService is created
      */
     public boolean isCreated() {
         return state == ServiceState.CREATED;
     }
-    
+
     /**
      * Sets the IoService state to CREATED.
      */
     protected void setCreated() {
         state = ServiceState.CREATED;
     }
-    
+
     /**
      * Sets the IoService state to ACTIVE.
      */
     protected void setActive() {
         state = ServiceState.ACTIVE;
     }
-    
+
     /**
      * Sets the IoService state to DISPOSED.
      */
     protected void setDisposed() {
         state = ServiceState.DISPOSED;
     }
-    
+
     /**
      * Sets the IoService state to DISPOSING.
      */
     protected void setDisposing() {
         state = ServiceState.DISPOSING;
     }
-    
+
     /**
      * Sets the IoService state to SUSPENDED.
      */
     protected void setSuspended() {
         state = ServiceState.SUSPENDED;
     }
-    
+
     /**
      * Initialize the IoService state
      */
     protected void initState() {
         state = ServiceState.NONE;
+    }
+
+    /**
+     * Inform all current the listeners of the service activation.
+     */
+    protected void fireServiceActivated() {
+        for (IoServiceListener listener : listeners) {
+            listener.serviceActivated(this);
+        }
+    }
+
+    /**
+     * Inform all current the listeners of the service desactivation.
+     */
+    protected void fireServiceDeactivated() {
+        for (IoServiceListener listener : listeners) {
+            listener.serviceDeactivated(this);
+        }
     }
 }

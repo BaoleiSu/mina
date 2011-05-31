@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * A {@link SelectorProcessor} for processing NIO based {@link IoSession}. 
+ * A {@link SelectorProcessor} for processing NIO based {@link IoSession}.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * 
@@ -67,21 +67,22 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
     private ByteBuffer readBuffer;
 
-    /** 
-     * new binded server to add to the selector
-     * {ServerSocketChannel, IoServer}
+    /**
+     * new binded server to add to the selector {ServerSocketChannel, IoServer}
      */
     private final Queue<Object[]> serversToAdd = new ConcurrentLinkedQueue<Object[]>();
 
     /** server to remove of the selector */
     private final Queue<ServerSocketChannel> serversToRemove = new ConcurrentLinkedQueue<ServerSocketChannel>();
 
-    /** new session freshly accepted, placed here for being added to the selector */
+    /**
+     * new session freshly accepted, placed here for being added to the selector
+     */
     private final Queue<NioTcpSession> sessionsToConnect = new ConcurrentLinkedQueue<NioTcpSession>();
 
     /** session to be removed of the selector */
     private final Queue<NioTcpSession> sessionsToClose = new ConcurrentLinkedQueue<NioTcpSession>();
-    
+
     /** A queue used to store the sessions to be flushed */
     private final Queue<NioTcpSession> flushingSessions = new ConcurrentLinkedQueue<NioTcpSession>();
 
@@ -147,7 +148,8 @@ public class NioSelectorProcessor implements SelectorProcessor {
     public void createSession(IoService service, Object clientSocket) {
         log.debug("create session");
         SocketChannel socketChannel = (SocketChannel) clientSocket;
-        NioTcpSession session = new NioTcpSession((NioTcpServer) service, socketChannel);
+        NioTcpSession session = new NioTcpSession((NioTcpServer) service, socketChannel,
+                strategy.getSelectorForNewSession(this));
 
         // TODO : configure
         try {
@@ -239,7 +241,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                     log.debug("selecting...");
                     int readyCount = selector.select(SELECT_TIMEOUT);
                     log.debug("... done selecting : {}", readyCount);
-                    
+
                     if (readyCount > 0) {
 
                         // process selected keys
@@ -273,20 +275,31 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                             }
                             if (key.isWritable()) {
-                            	log.debug("writable client {}", key);
-                            	NioTcpSession session = (NioTcpSession) key.attachment();
-                            	// write from the session write queue
-                            	WriteQueue queue = session.getWriteQueue();
-                            	do {
-                            		// get a write request from the queue
-                            		WriteRequest wr = queue.poll();
-                            		if (wr == null) {
-                            			break;
-                            		}
-                            		// TODO : write it
-                            		
-                            	} while(!queue.isEmpty());
-                                	
+                                log.debug("writable client {}", key);
+                                NioTcpSession session = (NioTcpSession) key.attachment();
+                                // write from the session write queue
+                                WriteQueue queue = session.getWriteQueue();
+                                do {
+                                    // get a write request from the queue
+                                    WriteRequest wreq = queue.peek();
+                                    if (wreq == null) {
+                                        break;
+                                    }
+                                    ByteBuffer buf = (ByteBuffer) wreq.getMessage();
+                                    int wrote = session.getSocketChannel().write(buf);
+                                    if (buf.remaining() == 0) {
+                                        // completed write request, let's remove
+                                        // it
+                                        queue.remove();
+                                    } else {
+                                        // output socket buffer is full, we need
+                                        // to give up until next selection for
+                                        // writing
+                                        break;
+                                    }
+
+                                } while (!queue.isEmpty());
+
                             }
 
                             if (key.isAcceptable()) {
@@ -303,23 +316,26 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                         }
                     }
-                    
-                    // registering session with data in the write queue for writing
+
+                    // registering session with data in the write queue for
+                    // writing
                     while (!flushingSessions.isEmpty()) {
-                    	NioTcpSession session = flushingSessions.poll();
-                    	// a key registered for read ? (because we can have a Selector for reads and another for the writes
-                    	SelectionKey readKey = sessionReadKey.get(session);
-                    	if (readKey != null) {
-                    		readKey.cancel();
-                    		// register for read/write
-                    		SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                        NioTcpSession session = flushingSessions.poll();
+                        // a key registered for read ? (because we can have a
+                        // Selector for reads and another for the writes
+                        SelectionKey readKey = sessionReadKey.get(session);
+                        if (readKey != null) {
+                            readKey.cancel();
+                            // register for read/write
+                            SelectionKey key = session.getSocketChannel().register(selector,
+                                    SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                             key.attach(session);
                             sessionReadKey.put(session, key);
-                            
-                    	} else {
-	                		SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_WRITE);
-	                		key.attach(session);
-                    	}
+
+                        } else {
+                            SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_WRITE);
+                            key.attach(session);
+                        }
                     }
                 } catch (IOException e) {
                     log.error("IOException while selecting selector", e);
@@ -336,12 +352,12 @@ public class NioSelectorProcessor implements SelectorProcessor {
         }
     }
 
-	@Override
-	public void flush(IoSession session) {
-		log.debug("scheduling session {} for writing",session.toString());
-		// add the session to the list of session to be registered for writing
-		// wake the selector
-		flushingSessions.add((NioTcpSession)session);
-		wakeupWorker();
-	}
+    @Override
+    public void flush(IoSession session) {
+        log.debug("scheduling session {} for writing", session.toString());
+        // add the session to the list of session to be registered for writing
+        // wake the selector
+        flushingSessions.add((NioTcpSession) session);
+        wakeupWorker();
+    }
 }

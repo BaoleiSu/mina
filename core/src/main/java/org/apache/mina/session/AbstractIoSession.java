@@ -86,12 +86,15 @@ public abstract class AbstractIoSession implements IoSession {
      * {@link IoSession#getId()}) and an associated {@link IoService}
      * 
      * @param service the service this session is associated with
+     * @param writeProcessor the processor in charge of processing this session write queue
      */
-    public AbstractIoSession(IoService service) {
+    public AbstractIoSession(IoService service, SelectorProcessor writeProcessor) {
         // generated a unique id
         id = NEXT_ID.getAndIncrement();
         creationTime = System.currentTimeMillis();
         this.service = service;
+        this.writeProcessor = writeProcessor;
+        
         LOG.debug("Created new session with id : {}", id);
         synchronized (stateMonitor) {
             this.state=SessionState.CREATED;
@@ -218,7 +221,7 @@ public abstract class AbstractIoSession implements IoSession {
     	writeQueue.add(new DefaultWriteRequest(message));
     	
     	// If it wasn't, we register this session as interested to write.
-    	// It's done in atomic fashion for avoiding two concurent registering.
+    	// It's done in atomic fashion for avoiding two concurrent registering.
     	if (!registeredForWrite.getAndSet(true)) {
     		writeProcessor.flush(this);
     	}

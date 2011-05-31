@@ -26,6 +26,9 @@ import java.net.SocketAddress;
 
 import junit.framework.Assert;
 
+import org.apache.mina.IoService;
+import org.apache.mina.IoServiceListener;
+import org.apache.mina.IoSession;
 import org.apache.mina.service.OneThreadSelectorStrategy;
 import org.apache.mina.service.SelectorFactory;
 import org.apache.mina.transport.tcp.NioSelectorProcessor;
@@ -52,9 +55,32 @@ public class NioAcceptorTest {
         OneThreadSelectorStrategy strategy = new OneThreadSelectorStrategy(
                 new SelectorFactory(NioSelectorProcessor.class));
         NioTcpServer acceptor = new NioTcpServer(strategy);
-        SocketAddress address = new InetSocketAddress(9999);
 
+        acceptor.addListener(new IoServiceListener() {
+            
+            @Override
+            public void sessionDestroyed(IoSession session) {
+                LOG.info("session destroyed {}",session);
+            }
+            
+            @Override
+            public void sessionCreated(IoSession session) {
+                LOG.info("session created {}",session);
+            }
+            
+            @Override
+            public void serviceDeactivated(IoService service) {
+                LOG.info("service deactivated {}",service);
+            }
+            
+            @Override
+            public void serviceActivated(IoService service) {
+                LOG.info("service activated {}",service);
+            }
+        });
+        
         try {
+            SocketAddress address = new InetSocketAddress(9999);
             acceptor.bind(address);
             LOG.debug("Waiting 25 sec");
             Thread.sleep(25000);
