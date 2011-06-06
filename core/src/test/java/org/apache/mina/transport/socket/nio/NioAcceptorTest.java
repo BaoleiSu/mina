@@ -23,6 +23,7 @@ package org.apache.mina.transport.socket.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.ByteBuffer;
 
 import junit.framework.Assert;
 
@@ -61,15 +62,20 @@ public class NioAcceptorTest {
             @Override
             public void sessionDestroyed(IoSession session) {
                 LOG.info("session destroyed {}",session);
+
             }
             
             @Override
             public void sessionCreated(IoSession session) {
                 LOG.info("session created {}",session);
+                ByteBuffer bf = ByteBuffer.allocate("toto".length());
+                bf.put("toto".getBytes());
+                bf.flip();
+                session.write(bf);
             }
             
             @Override
-            public void serviceDeactivated(IoService service) {
+            public void serviceInactivated(IoService service) {
                 LOG.info("service deactivated {}",service);
             }
             

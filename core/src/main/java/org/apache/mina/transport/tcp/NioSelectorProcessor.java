@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.mina.IoServer;
 import org.apache.mina.IoService;
 import org.apache.mina.IoSession;
+import org.apache.mina.service.AbstractIoService;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.service.SelectorStrategy;
 import org.apache.mina.session.WriteQueue;
@@ -222,6 +223,8 @@ public class NioSelectorProcessor implements SelectorProcessor {
                             key.attach(session);
                             sessionReadKey.put(session, key);
                             session.setConnected();
+                            // fire the event
+                            ((AbstractIoService) session.getService()).fireSessionCreated(session);
                         }
                     }
 
@@ -235,6 +238,8 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                             // needed ?
                             session.getSocketChannel().close();
+                            // fire the event
+                            ((AbstractIoService) session.getService()).fireSessionDestroyed(session);
                         }
                     }
 
@@ -275,7 +280,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
 
                             }
                             if (key.isWritable()) {
-                                log.debug("writable client {}", key);
+                                log.debug("writable session : {}", key.attachment());
                                 NioTcpSession session = (NioTcpSession) key.attachment();
                                 // write from the session write queue
                                 WriteQueue queue = session.getWriteQueue();
@@ -287,6 +292,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                                     }
                                     ByteBuffer buf = (ByteBuffer) wreq.getMessage();
                                     int wrote = session.getSocketChannel().write(buf);
+                                    log.debug("wrote {} bytes to {}", wrote, session);
                                     if (buf.remaining() == 0) {
                                         // completed write request, let's remove
                                         // it
@@ -299,6 +305,23 @@ public class NioSelectorProcessor implements SelectorProcessor {
                                     }
 
                                 } while (!queue.isEmpty());
+
+                                // if the session is no more interested in writing, we need
+                                // to stop listening for OP_WRITE events
+                                if (queue.isEmpty()) {
+                                    // a key registered for read ? (because we can have a
+                                    // Selector for reads and another for the writes
+                                    SelectionKey readKey = sessionReadKey.get(session);
+                                    if (readKey != null) {
+                                        log.debug("registering key for only reading");
+                                        SelectionKey mykey = session.getSocketChannel().register(selector,
+                                                SelectionKey.OP_READ, session);
+                                        sessionReadKey.put(session, mykey);
+                                    } else {
+                                        log.debug("cancel key for writing");
+                                        session.getSocketChannel().keyFor(selector).cancel();
+                                    }
+                                }
 
                             }
 
@@ -325,16 +348,14 @@ public class NioSelectorProcessor implements SelectorProcessor {
                         // Selector for reads and another for the writes
                         SelectionKey readKey = sessionReadKey.get(session);
                         if (readKey != null) {
-                            readKey.cancel();
                             // register for read/write
                             SelectionKey key = session.getSocketChannel().register(selector,
-                                    SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                            key.attach(session);
+                                    SelectionKey.OP_READ | SelectionKey.OP_WRITE, session);
+
                             sessionReadKey.put(session, key);
 
                         } else {
-                            SelectionKey key = session.getSocketChannel().register(selector, SelectionKey.OP_WRITE);
-                            key.attach(session);
+                            session.getSocketChannel().register(selector, SelectionKey.OP_WRITE, session);
                         }
                     }
                 } catch (IOException e) {

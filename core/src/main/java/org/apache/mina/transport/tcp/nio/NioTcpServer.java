@@ -94,7 +94,7 @@ public class NioTcpServer extends AbstractTcpServer {
                 strategy.unbind(socketAddress);
                 addresses.remove(socketAddress);
                 if (addresses.isEmpty()) {
-                    fireServiceDeactivated();
+                    fireServiceInactivated();
                 }
             }
         }

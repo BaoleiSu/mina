@@ -213,6 +213,7 @@ public abstract class AbstractIoSession implements IoSession {
      */
     @Override
     public void write(Object message) {
+        LOG.debug("writing message {} to session {}",message,this);
     	if (state == SessionState.CLOSED || state == SessionState.CLOSING) {
     		// TODO actually we just just shallow the message if the session is closed/closing
     		LOG.error("writing to closed or cloing session");

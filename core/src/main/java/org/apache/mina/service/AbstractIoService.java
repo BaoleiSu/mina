@@ -225,9 +225,21 @@ public abstract class AbstractIoService implements IoService {
     /**
      * Inform all current the listeners of the service desactivation.
      */
-    protected void fireServiceDeactivated() {
+    protected void fireServiceInactivated() {
         for (IoServiceListener listener : listeners) {
-            listener.serviceDeactivated(this);
+            listener.serviceInactivated(this);
+        }
+    }
+    
+    public void fireSessionCreated(IoSession session) {
+        for (IoServiceListener listener : listeners) {
+            listener.sessionCreated(session);
+        }
+    }
+    
+    public void fireSessionDestroyed(IoSession session) {
+        for (IoServiceListener listener : listeners) {
+            listener.sessionDestroyed(session);
         }
     }
 }

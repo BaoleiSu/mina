@@ -35,11 +35,11 @@ public interface IoServiceListener extends EventListener {
     void serviceActivated(IoService service);
     
     /**
-     * Invoked when a service is deactivated by an {@link IoService}.
+     * Invoked when a service is inactivated by an {@link IoService}.
      *
      * @param service the {@link IoService}
      */
-    void serviceDeactivated(IoService service);
+    void serviceInactivated(IoService service);
 
     /**
      * Invoked when a new session is created by an {@link IoService}.
