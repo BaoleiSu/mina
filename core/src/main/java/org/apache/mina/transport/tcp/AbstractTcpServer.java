@@ -26,7 +26,7 @@ import java.util.Set;
 import org.apache.mina.service.server.AbstractIoServer;
 
 /**
- * TODO
+ * Base class for TCP based Servers
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
@@ -39,34 +39,23 @@ public class AbstractTcpServer extends AbstractIoServer {
     }
     
     @Override
-    public Set<SocketAddress> getLocalAddresses()
-    {
-        // TODO Auto-generated method stub
+    public Set<SocketAddress> getLocalAddresses() {
         return null;
     }
 
 
     @Override
-    public void bind( SocketAddress... localAddress ) throws IOException
-    {
-        // TODO Auto-generated method stub
-
+    public void bind( SocketAddress... localAddress ) throws IOException {
     }
 
 
     @Override
-    public void unbindAll() throws IOException
-    {
-        // TODO Auto-generated method stub
-
+    public void unbindAll() throws IOException {
     }
 
 
     @Override
-    public void unbind( SocketAddress... localAddresses ) throws IOException
-    {
-        // TODO Auto-generated method stub
-
+    public void unbind( SocketAddress... localAddresses ) throws IOException {
     }
 
 }

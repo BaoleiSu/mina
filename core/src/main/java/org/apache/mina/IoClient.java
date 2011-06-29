@@ -37,11 +37,15 @@ public interface IoClient extends IoService {
 
     /**
      * Sets the connect timeout in milliseconds. The default value is 1 minute.
+     *
+     * @param connectTimeoutInMillis Connection timeout in ms
      */
     void setConnectTimeoutMillis(long connectTimeoutInMillis);
 
     /**
      * Connects to the specified remote address.
+     *
+     * @param remoteAddress Remote {@link SocketAddress} to connect
      * 
      * @return the {@link ConnectFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
@@ -51,6 +55,10 @@ public interface IoClient extends IoService {
     /**
      * Connects to the specified remote address binding to the specified local
      * address.
+     *
+     * @param remoteAddress Remote {@link SocketAddress} to connect
+     * @param localAddress  Local {@link SocketAddress} to use while initiating connection to
+     *                      remote {@link SocketAddress}
      * 
      * @return the {@link ConnectFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
