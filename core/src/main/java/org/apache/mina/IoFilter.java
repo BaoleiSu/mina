@@ -96,4 +96,13 @@ public interface IoFilter {
      * @throws Exception Exception If an error occurs while processing
      */
     void messageReceived(IoSession session, Object message) throws Exception;
+
+    /**
+     * Invoked when an exception occurs while executing the method
+     *
+     * @param session   {@link IoSession} associated with invocation
+     * @param cause     Real {@link Throwable} which broke the normal chain processing
+     * @throws Exception If an error occurs while processing
+     */
+    void exceptionCaught(IoSession session, Throwable cause) throws Exception;
 }

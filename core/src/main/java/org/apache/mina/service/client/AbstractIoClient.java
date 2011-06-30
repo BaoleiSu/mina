@@ -42,51 +42,34 @@ public class AbstractIoClient extends AbstractIoService implements IoClient {
     }
 
     @Override
-    public Map<Long, IoSession> getManagedSessions()
-    {
-        // TODO Auto-generated method stub
+    public Map<Long, IoSession> getManagedSessions() {
         return null;
     }
 
     @Override
-    public void addListener( IoServiceListener listener )
-    {
-        // TODO Auto-generated method stub
-        
+    public void addListener( IoServiceListener listener ) {
     }
 
     @Override
-    public void removeListener( IoServiceListener listener )
-    {
-        // TODO Auto-generated method stub
-        
+    public void removeListener( IoServiceListener listener ) {
     }
 
     @Override
-    public long getConnectTimeoutMillis()
-    {
-        // TODO Auto-generated method stub
+    public long getConnectTimeoutMillis() {
         return 0;
     }
 
     @Override
-    public void setConnectTimeoutMillis( long connectTimeoutInMillis )
-    {
-        // TODO Auto-generated method stub
-        
+    public void setConnectTimeoutMillis( long connectTimeoutInMillis ) {
     }
 
     @Override
-    public ConnectFuture connect( SocketAddress remoteAddress )
-    {
-        // TODO Auto-generated method stub
+    public ConnectFuture connect( SocketAddress remoteAddress ) {
         return null;
     }
 
     @Override
-    public ConnectFuture connect( SocketAddress remoteAddress, SocketAddress localAddress )
-    {
-        // TODO Auto-generated method stub
+    public ConnectFuture connect( SocketAddress remoteAddress, SocketAddress localAddress ) {
         return null;
     }
 
