@@ -23,7 +23,7 @@ package org.apache.mina;
 import java.util.List;
 
 /**
- * An implementation that is responsible for perfoming IO (network, file or
+ * An implementation that is responsible for performing IO (network, file or
  * any other kind of IO)
  *
  * The chain will look something like
@@ -58,16 +58,10 @@ import java.util.List;
 public interface IoFilterChain {
 
     /**
-     * Returns the parent {@link IoSession} of this chain.
-     * @return {@link IoSession}
-     */
-    IoSession getSession();
-
-    /**
      * Returns all the filters that are currently present in the chain.
      * Useful to the know the current processing chain. The chain is returned
-     * in the order of processing aka the first filter in th list shall be the
-     * first one to be processed
+     * in the order of processing (the first filter in the list shall be the
+     * first one to be processed)
      *
      * @return  List of all {@link IoFilter} present in the chain
      */
@@ -79,12 +73,36 @@ public interface IoFilterChain {
      *
      * @param ioFilter  Filter to be added in the Chain
      */
-    void addFilter(IoFilter ioFilter);
+    void addLast(IoFilter ioFilter);
+
+    /**
+     * Add the specified {@link IoFilter} to the beginning of the chain. The filter is 
+     * inserted before all the other filter currently in the chain.
+     * @param ioFilter
+     */
+    void addFirst(IoFilter ioFilter);
+
+    /**
+     * Insert the specified {@link IoFilter} before the filter at the given position
+     * @param position where we want to insert before our filter
+     * @param ioFilter the filter to be inserted
+     * @throws IndexOutOfBoundsException if the position is out of this list
+     */
+    void insertBefore(int position, IoFilter ioFilter) throws IndexOutOfBoundsException;
+
+    /**
+     * Insert the specified {@link IoFilter} after the filter at the given position
+     * @param position where we want to insert before our filter
+     * @param ioFilter the filter to be inserted
+     * @throws IndexOutOfBoundsException if the position is out of this list
+     */
+    void insertAfter(int position, IoFilter ioFilter);
 
     /**
      * Removes the Filter from the Chain.
      *
      * @param ioFilter  Filter to be removed
+     * @return <code>true</code> if successful
      */
-    void removeFilter(IoFilter ioFilter);
+    boolean removeFilter(IoFilter ioFilter);
 }
