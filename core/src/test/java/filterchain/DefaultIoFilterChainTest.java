@@ -125,7 +125,8 @@ public class DefaultIoFilterChainTest {
         }
 
         @Override
-        public void messageWritting(IoSession session, Object message) throws Exception {
+        public Object messageWriting(IoSession session, Object message) throws Exception {
+            return message;
         }
 
         @Override

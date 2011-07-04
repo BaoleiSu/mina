@@ -78,9 +78,11 @@ public interface IoFilter {
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.
      * 
      * @param session {@link IoSession} associated with the invocation
+     * @param message the message to process before writing
      * @throws Exception Exception If an error occurs while processing
+     * @return the message after processing
      */
-    void messageWritting(IoSession session, Object message) throws Exception;
+    Object messageWriting(IoSession session, Object message) throws Exception;
 
     /**
      * Invoked when an exception occurs while executing the method

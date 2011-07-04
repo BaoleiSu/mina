@@ -116,11 +116,27 @@ public class DefaultIoFilterChain implements IoFilterChain {
             try {
                 message = filter.messageReceived(session, message);
             } catch (Exception e) {
-                LOG.error("Exception caught during processing session created event", e);
+                LOG.error("Exception caught during processing message received event", e);
                 // we re-forward the catched Exception
                 processExceptionCaught(session, e);
             }
         }
         return message;
     }
+
+    @Override
+    public Object processMessageWriting(IoSession session, Object message) {
+        int len = chain.size();
+        for (int i = 1; i <= len; i++) {
+            try {
+                message = chain.get(len - i).messageWriting(session, message);
+            } catch (Exception e) {
+                LOG.error("Exception caught during processing message writing event", e);
+                // we re-forward the catched Exception
+                processExceptionCaught(session, e);
+            }
+        }
+        return message;
+    }
+
 }

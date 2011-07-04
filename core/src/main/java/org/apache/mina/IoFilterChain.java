@@ -122,9 +122,18 @@ public interface IoFilterChain {
 
     /**
      * Call this method for processing a received message using this chain.
+     * This processing is done in reverse order.
      * @param session {@link IoSession} associated with this message
-     * @param messagethe received message
+     * @param message the received message
      * @return the message after the processing of each filter
      */
     Object processMessageReceived(IoSession session, Object message);
+
+    /**
+     * Call this method for processing a message for writing using this chain.
+     * @param session {@link IoSession} associated with this message
+     * @param message the message to write
+     * @return the message after the processing
+     */
+    Object processMessageWriting(IoSession session, Object message);
 }
