@@ -104,14 +104,6 @@ public class DefaultIoFilterChainTest {
         }
 
         @Override
-        public void init() throws Exception {
-        }
-
-        @Override
-        public void destroy() throws Exception {
-        }
-
-        @Override
         public void sessionCreated(IoSession session) throws Exception {
         }
 
@@ -128,7 +120,8 @@ public class DefaultIoFilterChainTest {
         }
 
         @Override
-        public void messageReceived(IoSession session, Object message) throws Exception {
+        public Object messageReceived(IoSession session, Object message) throws Exception {
+            return message;
         }
 
         @Override

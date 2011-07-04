@@ -27,21 +27,6 @@ package org.apache.mina;
  */
 public interface IoFilter {
 
-    /**
-     * Invoked when this filter is added to a {@link IoFilterChain} at the first time, so you can initialize shared
-     * resources.
-     * 
-     * @throws Exception If an initialization error occurs
-     */
-    void init() throws Exception;
-
-    /**
-     * Invoked when this filter is not used by any {@link IoFilterChain} anymore, so you can destroy shared resources.
-     * 
-     * @throws Exception If an error occurs while processing
-     */
-    void destroy() throws Exception;
-
     // ---- Events Functions ---
     /**
      * Invoked from an I/O processor thread when a new connection has been created. Because this method is supposed to
@@ -83,9 +68,11 @@ public interface IoFilter {
      * Invoked when a message is received.
      * 
      * @param session {@link IoSession} associated with the invocation
+     * @param message the incoming message to process
+     * @return the message after processing
      * @throws Exception Exception If an error occurs while processing
      */
-    void messageReceived(IoSession session, Object message) throws Exception;
+    Object messageReceived(IoSession session, Object message) throws Exception;
 
     /**
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.

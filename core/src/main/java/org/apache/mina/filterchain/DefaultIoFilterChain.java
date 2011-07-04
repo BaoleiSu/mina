@@ -25,8 +25,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.mina.IoFilter;
 import org.apache.mina.IoFilterChain;
+import org.apache.mina.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultIoFilterChain implements IoFilterChain {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultIoFilterChain.class);
 
     /**
      * The list of {@link IoFilter} compounding this chain.
@@ -80,4 +85,42 @@ public class DefaultIoFilterChain implements IoFilterChain {
         return bldr.append("}").toString();
     }
 
+    @Override
+    public void processExceptionCaught(IoSession session, Throwable cause) {
+        for (IoFilter filter : chain) {
+
+            try {
+                filter.exceptionCaught(session, cause);
+            } catch (Exception e) {
+                LOG.error("Exception caught during processing exception caught event", e);
+            }
+        }
+    }
+
+    @Override
+    public void processSessionCreated(IoSession session) {
+        for (IoFilter filter : chain) {
+            try {
+                filter.sessionCreated(session);
+            } catch (Exception e) {
+                LOG.error("Exception caught during processing session created event", e);
+                // we re-forward the catched Exception
+                processExceptionCaught(session, e);
+            }
+        }
+    }
+
+    @Override
+    public Object processMessageReceived(IoSession session, Object message) {
+        for (IoFilter filter : chain) {
+            try {
+                message = filter.messageReceived(session, message);
+            } catch (Exception e) {
+                LOG.error("Exception caught during processing session created event", e);
+                // we re-forward the catched Exception
+                processExceptionCaught(session, e);
+            }
+        }
+        return message;
+    }
 }

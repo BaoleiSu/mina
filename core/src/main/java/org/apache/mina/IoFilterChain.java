@@ -105,4 +105,26 @@ public interface IoFilterChain {
      * @return <code>true</code> if successful
      */
     boolean removeFilter(IoFilter ioFilter);
+
+    /**
+     * Call this method for processing a exception caught event using this chain.
+     * Any spawned exception during this processing will be caught and logged as error.
+     * @param session {@link IoSession} associated with invocation
+     * @param cause Real {@link Throwable} which broke the normal chain processing
+     */
+    void processExceptionCaught(IoSession session, Throwable cause);
+
+    /**
+     * Call this method for processing a session created event using this chain.
+     * @param session {@link IoSession} the freshly created session
+     */
+    void processSessionCreated(IoSession session);
+
+    /**
+     * Call this method for processing a received message using this chain.
+     * @param session {@link IoSession} associated with this message
+     * @param messagethe received message
+     * @return the message after the processing of each filter
+     */
+    Object processMessageReceived(IoSession session, Object message);
 }
