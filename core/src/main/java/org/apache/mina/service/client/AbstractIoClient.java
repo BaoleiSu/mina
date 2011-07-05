@@ -22,8 +22,8 @@ package org.apache.mina.service.client;
 import java.net.SocketAddress;
 import java.util.Map;
 
-import org.apache.mina.ConnectFuture;
 import org.apache.mina.IoClient;
+import org.apache.mina.IoFuture;
 import org.apache.mina.IoServiceListener;
 import org.apache.mina.IoSession;
 import org.apache.mina.service.AbstractIoService;
@@ -64,12 +64,12 @@ public class AbstractIoClient extends AbstractIoService implements IoClient {
     }
 
     @Override
-    public ConnectFuture connect( SocketAddress remoteAddress ) {
+    public IoFuture<IoSession> connect( SocketAddress remoteAddress ) {
         return null;
     }
 
     @Override
-    public ConnectFuture connect( SocketAddress remoteAddress, SocketAddress localAddress ) {
+    public IoFuture<IoSession> connect( SocketAddress remoteAddress, SocketAddress localAddress ) {
         return null;
     }
 

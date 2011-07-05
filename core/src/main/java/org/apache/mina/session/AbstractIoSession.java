@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.mina.IoFuture;
 import org.apache.mina.IoService;
 import org.apache.mina.IoSession;
-import org.apache.mina.WriteFuture;
 import org.apache.mina.service.SelectorProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,9 +229,9 @@ public abstract class AbstractIoSession implements IoSession {
     }
     
     @Override
-    public WriteFuture writeWithFuture(Object message) {
+    public IoFuture<Void> writeWithFuture(Object message) {
     	write(message);
-    	// TODO implements WriteFuture
+    	// TODO implements IoFuture
     	return null;
     }
     

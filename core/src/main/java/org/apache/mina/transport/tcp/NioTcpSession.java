@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
-import org.apache.mina.CloseFuture;
+import org.apache.mina.IoFuture;
 import org.apache.mina.IoSessionConfig;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.session.AbstractIoSession;
@@ -96,7 +96,7 @@ public class NioTcpSession extends AbstractIoSession {
     }
 
     @Override
-    public CloseFuture close(boolean immediately) {
+    public IoFuture<Void> close(boolean immediately) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -104,16 +104,16 @@ public interface IoSession {
 	/**
 	 * Closes this session immediately or after all queued write requests are
 	 * flushed. This operation is asynchronous. Wait for the returned
-	 * {@link CloseFuture} if you want to wait for the session actually closed.
+	 * {@link IoFuture} if you want to wait for the session actually closed.
 	 * Once this method has been called, no incoming request will be accepted.
 	 * 
 	 * @param immediately
 	 *            {@code true} to close this session immediately. {@code false}
 	 *            to close this session after all queued write requests are
 	 *            flushed.
-	 * @return A {@link CloseFuture} that will contains the session's state
+	 * @return A {@link IoFuture} that will contains the session's state
 	 */
-	CloseFuture close(boolean immediately);
+	IoFuture<Void> close(boolean immediately);
 
 	/* READ/WRITE PAUSE MANAGEMENT */
 	/**
@@ -275,12 +275,12 @@ public interface IoSession {
 
 	/**
 	 * Same as {@link IoSession#write(Object)}, but provide a
-	 * {@link WriteFuture} for tracking the completion of this write.
+	 * {@link IoFuture} for tracking the completion of this write.
 	 * 
 	 * @param message the message to be processed and written
-	 * @return the {@link WriteFuture} for tracking this asynchronous operation
+	 * @return the {@link IoFuture} for tracking this asynchronous operation
 	 */
-	public WriteFuture writeWithFuture(Object message);
+	public IoFuture<Void> writeWithFuture(Object message);
 	
 	/**
 	 * Get the {@link WriteQueue} of this session. The write queue contains the pending writes.

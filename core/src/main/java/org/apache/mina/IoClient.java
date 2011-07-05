@@ -47,10 +47,10 @@ public interface IoClient extends IoService {
      *
      * @param remoteAddress Remote {@link SocketAddress} to connect
      * 
-     * @return the {@link ConnectFuture} instance which is completed when the
+     * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */
-    ConnectFuture connect(SocketAddress remoteAddress);
+    IoFuture<IoSession> connect(SocketAddress remoteAddress);
 
     /**
      * Connects to the specified remote address binding to the specified local
@@ -60,9 +60,8 @@ public interface IoClient extends IoService {
      * @param localAddress  Local {@link SocketAddress} to use while initiating connection to
      *                      remote {@link SocketAddress}
      * 
-     * @return the {@link ConnectFuture} instance which is completed when the
+     * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */
-    ConnectFuture connect(SocketAddress remoteAddress,
-            SocketAddress localAddress);
+    IoFuture<IoSession> connect(SocketAddress remoteAddress, SocketAddress localAddress);
 }

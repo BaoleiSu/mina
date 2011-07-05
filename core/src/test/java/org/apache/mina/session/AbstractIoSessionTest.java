@@ -4,7 +4,7 @@ import java.net.SocketAddress;
 
 import junit.framework.Assert;
 
-import org.apache.mina.CloseFuture;
+import org.apache.mina.IoFuture;
 import org.apache.mina.IoService;
 import org.apache.mina.IoSessionConfig;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class AbstractIoSessionTest {
         }
 
         @Override
-        public CloseFuture close(boolean immediately) {
+        public IoFuture<Void> close(boolean immediately) {
             return null;
         }
 
