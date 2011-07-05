@@ -17,41 +17,28 @@
  *  under the License.
  *
  */
-package org.apache.mina;
-
-import java.util.EventListener;
+package org.apache.mina.api;
 
 /**
- * Listens to events related to an {@link IoService}.
+ * The configuration of {@link IoSession}.
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public interface IoServiceListener extends EventListener {
-    /**
-     * Invoked when a new service is activated by an {@link IoService}.
-     *
-     * @param service the {@link IoService}
-     */
-    void serviceActivated(IoService service);
-    
-    /**
-     * Invoked when a service is inactivated by an {@link IoService}.
-     *
-     * @param service the {@link IoService}
-     */
-    void serviceInactivated(IoService service);
+public interface IoSessionConfig {
 
     /**
-     * Invoked when a new session is created by an {@link IoService}.
+     * Returns idle time for the specified type of idleness in milli-seconds.
      *
-     * @param session the new session
+     * @see IdleStatus
      */
-    void sessionCreated(IoSession session);
+    long getIdleTimeInMillis(IdleStatus status);
 
     /**
-     * Invoked when a session is being destroyed by an {@link IoService}.
+     * Set the delay before an {@link IoSession} is considered idle for a given
+     * operation type (read/write/both) @see IdleStatus
      *
-     * @param session the session to be destroyed
+     * @param status          the type of idle (read/write/both) timeout to set
+     * @param ildeTimeInMilli the timeout in milliseconds
      */
-    void sessionDestroyed(IoSession session);
+    void setIdleTimeInMillis(IdleStatus status, long ildeTimeInMilli);
 }

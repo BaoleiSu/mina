@@ -18,7 +18,7 @@
  *
  */
 
-package org.apache.mina;
+package org.apache.mina.api;
 
 import java.util.List;
 
@@ -76,7 +76,7 @@ public interface IoFilterChain {
     void addLast(IoFilter ioFilter);
 
     /**
-     * Add the specified {@link IoFilter} to the beginning of the chain. The filter is 
+     * Add the specified {@link IoFilter} to the beginning of the chain. The filter is
      * inserted before all the other filter currently in the chain.
      * @param ioFilter
      */

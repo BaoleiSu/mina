@@ -22,10 +22,10 @@ package org.apache.mina.service.client;
 import java.net.SocketAddress;
 import java.util.Map;
 
-import org.apache.mina.IoClient;
-import org.apache.mina.IoFuture;
-import org.apache.mina.IoServiceListener;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoClient;
+import org.apache.mina.api.*;
+import org.apache.mina.api.IoServiceListener;
+import org.apache.mina.api.IoSession;
 import org.apache.mina.service.AbstractIoService;
 
 /**

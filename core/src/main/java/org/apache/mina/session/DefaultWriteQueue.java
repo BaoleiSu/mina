@@ -21,11 +21,9 @@ package org.apache.mina.session;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.mina.IoSession;
-
 /**
  * The default implementation of the WriteRequest queue for storing writes to
- * process in the {@link IoSession}.
+ * process in the {@link org.apache.mina.api.IoSession}.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * 

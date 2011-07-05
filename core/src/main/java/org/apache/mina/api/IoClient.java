@@ -17,15 +17,15 @@
  *  under the License.
  *
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
 import java.net.SocketAddress;
 
 /**
  * Connects to endpoint, communicates with the server, and fires events to
  * {@link IoHandler}s.
- * 
- * 
+ *
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface IoClient extends IoService {
@@ -46,7 +46,7 @@ public interface IoClient extends IoService {
      * Connects to the specified remote address.
      *
      * @param remoteAddress Remote {@link SocketAddress} to connect
-     * 
+     *
      * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */
@@ -59,7 +59,7 @@ public interface IoClient extends IoService {
      * @param remoteAddress Remote {@link SocketAddress} to connect
      * @param localAddress  Local {@link SocketAddress} to use while initiating connection to
      *                      remote {@link SocketAddress}
-     * 
+     *
      * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */

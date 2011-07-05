@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.mina.IoFilter;
-import org.apache.mina.IoFilterChain;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoFilter;
+import org.apache.mina.api.IoFilterChain;
+import org.apache.mina.api.IoSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

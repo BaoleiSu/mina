@@ -23,9 +23,9 @@ package org.apache.mina.service;
 import java.io.IOException;
 import java.net.SocketAddress;
 
-import org.apache.mina.IoServer;
-import org.apache.mina.IoService;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoServer;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoSession;
 
 /**
  * A processor in charge of a group of client session and server sockets.

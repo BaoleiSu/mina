@@ -25,9 +25,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.mina.IdleStatus;
-import org.apache.mina.IoFilter;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IdleStatus;
+import org.apache.mina.api.IoFilter;
+import org.apache.mina.api.IoSession;
 import org.apache.mina.filterchain.DefaultIoFilterChain;
 import org.junit.Test;
 

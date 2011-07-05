@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.mina.IoFuture;
-import org.apache.mina.IoService;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoFuture;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoSession;
 import org.apache.mina.service.SelectorProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,8 +82,8 @@ public abstract class AbstractIoSession implements IoSession {
     private WriteQueue writeQueue = new DefaultWriteQueue();
     
     /**
-     * Create an {@link IoSession} with a unique identifier (
-     * {@link IoSession#getId()}) and an associated {@link IoService}
+     * Create an {@link org.apache.mina.api.IoSession} with a unique identifier (
+     * {@link org.apache.mina.api.IoSession#getId()}) and an associated {@link IoService}
      * 
      * @param service the service this session is associated with
      * @param writeProcessor the processor in charge of processing this session write queue

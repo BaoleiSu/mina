@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
 
 import java.util.concurrent.Future;

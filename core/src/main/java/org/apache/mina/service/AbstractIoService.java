@@ -24,9 +24,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.mina.IoService;
-import org.apache.mina.IoServiceListener;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoServiceListener;
+import org.apache.mina.api.IoSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,7 +22,7 @@ package org.apache.mina.service;
 import java.io.IOException;
 import java.net.SocketAddress;
 
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoSession;
 
 
 /**

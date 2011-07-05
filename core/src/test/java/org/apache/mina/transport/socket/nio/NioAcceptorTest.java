@@ -27,9 +27,9 @@ import java.nio.ByteBuffer;
 
 import junit.framework.Assert;
 
-import org.apache.mina.IoService;
-import org.apache.mina.IoServiceListener;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoServiceListener;
+import org.apache.mina.api.IoSession;
 import org.apache.mina.service.OneThreadSelectorStrategy;
 import org.apache.mina.service.SelectorFactory;
 import org.apache.mina.transport.tcp.NioSelectorProcessor;

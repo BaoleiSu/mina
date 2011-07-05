@@ -36,9 +36,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.mina.IoServer;
-import org.apache.mina.IoService;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IoServer;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoSession;
 import org.apache.mina.service.AbstractIoService;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.service.SelectorStrategy;

@@ -19,7 +19,7 @@
  */
 package org.apache.mina.service.server;
 
-import org.apache.mina.IoServer;
+import org.apache.mina.api.IoServer;
 import org.apache.mina.service.AbstractIoService;
 
 /**

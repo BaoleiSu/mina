@@ -19,10 +19,8 @@
  */
 package org.apache.mina.session;
 
-import org.apache.mina.IoSession;
-
 /**
- * The write request created by the {@link IoSession#write} method, travel around the filter chain and finish as a 
+ * The write request created by the {@link org.apache.mina.api.IoSession#write} method, travel around the filter chain and finish as a
  * socket write.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>

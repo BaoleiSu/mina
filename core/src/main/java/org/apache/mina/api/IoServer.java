@@ -17,16 +17,16 @@
  *  under the License.
  *
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
- * 
+ *
  */
 public interface IoServer extends IoService {
 
@@ -38,7 +38,7 @@ public interface IoServer extends IoService {
     /**
      * Binds to the specified local addresses and start to accept incoming
      * connections.
-     * 
+     *
      * @throws IOException
      *             if failed to bind
      */

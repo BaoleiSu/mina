@@ -18,11 +18,11 @@
  *
  */
 
-package org.apache.mina;
+package org.apache.mina.api;
 
 /**
  * Filter are interceptors/processors for incoming data received/sent.
- * 
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface IoFilter {
@@ -33,16 +33,16 @@ public interface IoFilter {
      * be called from the same thread that handles I/O of multiple sessions, please implement this method to perform
      * tasks that consumes minimal amount of time such as socket parameter and user-defined session attribute
      * initialization.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
-     * 
+     *
      * @throws Exception Exception If an error occurs while processing
      */
     void sessionCreated(IoSession session) throws Exception;
 
     /**
      * Invoked when a connection has been opened.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
      * @throws Exception Exception If an error occurs while processing
      */
@@ -50,7 +50,7 @@ public interface IoFilter {
 
     /**
      * Invoked when a connection is closed.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
      * @throws Exception Exception If an error occurs while processing
      */
@@ -58,7 +58,7 @@ public interface IoFilter {
 
     /**
      * Invoked with the related {@link IdleStatus} when a connection becomes idle.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
      * @throws Exception Exception If an error occurs while processing
      */
@@ -66,7 +66,7 @@ public interface IoFilter {
 
     /**
      * Invoked when a message is received.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
      * @param message the incoming message to process
      * @return the message after processing
@@ -76,7 +76,7 @@ public interface IoFilter {
 
     /**
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.
-     * 
+     *
      * @param session {@link IoSession} associated with the invocation
      * @param message the message to process before writing
      * @throws Exception Exception If an error occurs while processing
@@ -86,7 +86,7 @@ public interface IoFilter {
 
     /**
      * Invoked when an exception occurs while executing the method
-     * 
+     *
      * @param session {@link IoSession} associated with invocation
      * @param cause Real {@link Throwable} which broke the normal chain processing
      * @throws Exception If an error occurs while processing

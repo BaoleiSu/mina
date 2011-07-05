@@ -4,9 +4,10 @@ import java.net.SocketAddress;
 
 import junit.framework.Assert;
 
-import org.apache.mina.IoFuture;
-import org.apache.mina.IoService;
-import org.apache.mina.IoSessionConfig;
+import org.apache.mina.api.IoFuture;
+import org.apache.mina.api.IoService;
+import org.apache.mina.api.IoSessionConfig;
+
 import org.junit.Test;
 
 public class AbstractIoSessionTest {

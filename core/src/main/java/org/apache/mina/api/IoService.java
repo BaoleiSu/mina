@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public interface IoService {
      * @return the sessions. An empty collection if there's no session.
      */
     Map<Long, IoSession> getManagedSessions();
-    
+
     /**
      * Adds an {@link IoServiceListener} that listens any events related with
      * this service.
@@ -58,7 +58,7 @@ public interface IoService {
 
     IoHandler getHandler();
     /**
-     * Sets the handler which will handle all connections managed by this service. The handler 
+     * Sets the handler which will handle all connections managed by this service. The handler
      * can only be set before the service is started.
      */
     void setHandler(IoHandler handler);

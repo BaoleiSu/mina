@@ -23,8 +23,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
-import org.apache.mina.IoFuture;
-import org.apache.mina.IoSessionConfig;
+import org.apache.mina.api.IoFuture;
+import org.apache.mina.api.IoSessionConfig;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.session.AbstractIoSession;
 import org.apache.mina.transport.tcp.nio.NioTcpServer;

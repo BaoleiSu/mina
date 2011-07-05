@@ -21,8 +21,8 @@ package org.apache.mina.service;
 
 import java.io.IOException;
 
-import org.apache.mina.IdleStatus;
-import org.apache.mina.IoSession;
+import org.apache.mina.api.IdleStatus;
+import org.apache.mina.api.IoSession;
 
 /**
  * Handles all I/O events fired by MINA. This is the Interface an application will implement

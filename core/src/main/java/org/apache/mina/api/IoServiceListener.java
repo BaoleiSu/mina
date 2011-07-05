@@ -17,41 +17,41 @@
  *  under the License.
  *
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
-import java.security.InvalidParameterException;
-
+import java.util.EventListener;
 
 /**
- * Represents the type of idleness of {@link IoSession}. 
- *  There are three types of idleness:
- * <ul>
- *   <li>{@link #READ_IDLE} - No data is coming from the remote peer.</li>
- *   <li>{@link #WRITE_IDLE} - Session is not writing any data.</li>
- *   <li>{@link #READ_WRITE_IDLE} - Both {@link #READ_IDLE} and {@link #WRITE_IDLE}.</li>
- * </ul>
- * <p>
+ * Listens to events related to an {@link IoService}.
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public enum IdleStatus {
-    READ_IDLE,
-    WRITE_IDLE,
-    READ_WRITE_IDLE;
+public interface IoServiceListener extends EventListener {
+    /**
+     * Invoked when a new service is activated by an {@link IoService}.
+     *
+     * @param service the {@link IoService}
+     */
+    void serviceActivated(IoService service);
 
     /**
-     * Returns the string representation of this status.
+     * Invoked when a service is inactivated by an {@link IoService}.
+     *
+     * @param service the {@link IoService}
      */
-    @Override
-    public String toString() {
-        switch (this) {
-        case READ_IDLE:
-            return "read idle";
-        case WRITE_IDLE:
-            return "write idle";
-        case READ_WRITE_IDLE:
-            return "both idle";
-        default:
-            throw new InvalidParameterException("unknown IdleStatus");
-        }
-    }
+    void serviceInactivated(IoService service);
+
+    /**
+     * Invoked when a new session is created by an {@link IoService}.
+     *
+     * @param session the new session
+     */
+    void sessionCreated(IoSession session);
+
+    /**
+     * Invoked when a session is being destroyed by an {@link IoService}.
+     *
+     * @param session the session to be destroyed
+     */
+    void sessionDestroyed(IoSession session);
 }

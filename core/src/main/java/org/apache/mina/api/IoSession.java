@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-package org.apache.mina;
+package org.apache.mina.api;
 
 import java.net.SocketAddress;
 import java.util.Set;
@@ -47,14 +47,14 @@ import org.apache.mina.session.WriteQueue;
  * be executed simultaneously, and therefore you have to make sure the
  * {@link IoFilter} implementations you're using are thread-safe, too.
  * </p>
- * 
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface IoSession {
 
 	/**
 	 * The unique identifier of this session.
-	 * 
+	 *
 	 * @return the session's unique identifier
 	 */
 	long getId();
@@ -63,14 +63,14 @@ public interface IoSession {
 
 	/**
 	 * Returns the socket address of remote peer.
-	 * 
+	 *
 	 * @return the remote socket address
 	 */
 	SocketAddress getRemoteAddress();
 
 	/**
 	 * Gets the local address of the local peer.
-	 * 
+	 *
 	 * @return the socket address of local machine which is associated with this
 	 *         session.
 	 */
@@ -78,7 +78,7 @@ public interface IoSession {
 
 	/**
 	 * Gets the service this session is attached to.
-	 * 
+	 *
 	 * @return the {@link IoService} which provides {@link IoSession} to this
 	 *         session.
 	 */
@@ -88,14 +88,14 @@ public interface IoSession {
 	/**
 	 * Tells if the session is currently connected and able to process incoming
 	 * requests and to send outgoing responses.
-	 * 
+	 *
 	 * @return <code>true</code> if this session is connected with remote peer.
 	 */
 	boolean isConnected();
 
 	/**
 	 * Tells if the session is being closed, but is not yet in Closed state.
-	 * 
+	 *
 	 * @return <code>true</tt> if and only if this session is being closed
 	 * (but not disconnected yet) or is closed.
 	 */
@@ -106,7 +106,7 @@ public interface IoSession {
 	 * flushed. This operation is asynchronous. Wait for the returned
 	 * {@link IoFuture} if you want to wait for the session actually closed.
 	 * Once this method has been called, no incoming request will be accepted.
-	 * 
+	 *
 	 * @param immediately
 	 *            {@code true} to close this session immediately. {@code false}
 	 *            to close this session after all queued write requests are
@@ -138,14 +138,14 @@ public interface IoSession {
 
 	/**
 	 * Is read operation is suspended for this session.
-	 * 
+	 *
 	 * @return <code>true</code> if suspended
 	 */
 	boolean isReadSuspended();
 
 	/**
 	 * Is write operation is suspended for this session.
-	 * 
+	 *
 	 * @return <code>true</code> if suspended
 	 */
 	boolean isWriteSuspended();
@@ -154,7 +154,7 @@ public interface IoSession {
 	/**
 	 * Gets the total number of bytes read for this session since it was
 	 * created.
-	 * 
+	 *
 	 * Returns the total number of bytes which were read from this session.
 	 */
 	long getReadBytes();
@@ -162,7 +162,7 @@ public interface IoSession {
 	/**
 	 * Gets the total number of bytes written for this session since it was
 	 * created.
-	 * 
+	 *
 	 * @return the total number of bytes which were written to this session.
 	 */
 	long getWrittenBytes();
@@ -171,14 +171,14 @@ public interface IoSession {
 	/**
 	 * Gets the session configuration, it where the idle timeout are set and
 	 * other transport specific configuration.
-	 * 
+	 *
 	 * @return the session's configuration
 	 */
 	IoSessionConfig getConfig();
 
 	/**
 	 * The session's creation time.
-	 * 
+	 *
 	 * @return the session's creation time in milliseconds
 	 */
 	long getCreationTime();
@@ -186,21 +186,21 @@ public interface IoSession {
 	/**
 	 * Returns the time in millisecond when I/O occurred lastly (either read or
 	 * write).
-	 * 
+	 *
 	 * @return the time of the last read or write done for this session
 	 */
 	long getLastIoTime();
 
 	/**
 	 * Returns the time in millisecond when the last I/O read occurred.
-	 * 
+	 *
 	 * Returns the time in millisecond when read operation occurred lastly.
 	 */
 	long getLastReadTime();
 
 	/**
 	 * Returns the time in millisecond when the last I/O write occurred.
-	 * 
+	 *
 	 * Returns the time in millisecond when write operation occurred lastly.
 	 */
 	long getLastWriteTime();
@@ -208,7 +208,7 @@ public interface IoSession {
 	/* Session context management */
 	/**
 	 * Returns the value of the user-defined attribute for this session.
-	 * 
+	 *
 	 * @param name
 	 *            the attribute's name
 	 * @return <tt>null</tt> if there is no attribute with the specified name
@@ -217,7 +217,7 @@ public interface IoSession {
 
 	/**
 	 * Sets a user-defined attribute.
-	 * 
+	 *
 	 * @param name
 	 *            the attribute's name
 	 * @param value
@@ -229,7 +229,7 @@ public interface IoSession {
 
 	/**
 	 * Removes a user-defined attribute with the specified name.
-	 * 
+	 *
 	 * @param name
 	 *            the attribute's name
 	 * @return The old attribute's value. <tt>null</tt> if not found or if the
@@ -239,7 +239,7 @@ public interface IoSession {
 
 	/**
 	 * Tells if the session has an attached attribute.
-	 * 
+	 *
 	 * @return <tt>true</tt> if this session contains the attribute with the
 	 *         specified <tt>name</tt>.
 	 */
@@ -247,7 +247,7 @@ public interface IoSession {
 
 	/**
 	 * Gets the set of attributes stored within the session.
-	 * 
+	 *
 	 * @return the set of names of all user-defined attributes.
 	 */
 	Set<Object> getAttributeNames();
@@ -256,9 +256,9 @@ public interface IoSession {
 
 	/**
 	 * State of a {@link IoSession}
-	 * 
+	 *
 	 * @author <a href="http://mina.apache.org">Apache MINA Project</a>
-	 * 
+	 *
 	 */
 	public enum SessionState {
 		CREATED, CONNECTED, CLOSING, CLOSED
@@ -269,19 +269,19 @@ public interface IoSession {
 	 * Enqueue a message for writing. This method wont block ! The message will
 	 * by asynchronously processed by the filter chain and wrote to socket by
 	 * the {@link SelectorProcessor}.
-	 * 
+	 *
 	 */
 	public void write(Object message);
 
 	/**
 	 * Same as {@link IoSession#write(Object)}, but provide a
 	 * {@link IoFuture} for tracking the completion of this write.
-	 * 
+	 *
 	 * @param message the message to be processed and written
 	 * @return the {@link IoFuture} for tracking this asynchronous operation
 	 */
 	public IoFuture<Void> writeWithFuture(Object message);
-	
+
 	/**
 	 * Get the {@link WriteQueue} of this session. The write queue contains the pending writes.
 	 * @return the write queue of this session
