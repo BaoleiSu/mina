@@ -23,8 +23,7 @@ import java.net.SocketAddress;
 
 /**
  * Connects to endpoint, communicates with the server, and fires events to
- * {@link IoHandler}s.
- *
+ * {@link org.apache.mina.service.IoHandler}s.
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
@@ -32,6 +31,8 @@ public interface IoClient extends IoService {
     /**
      * Returns the connect timeout in milliseconds. The default value is 1
      * minute.
+     *
+     * @return the connect timeout in milliseconds
      */
     long getConnectTimeoutMillis();
 
@@ -46,7 +47,6 @@ public interface IoClient extends IoService {
      * Connects to the specified remote address.
      *
      * @param remoteAddress Remote {@link SocketAddress} to connect
-     *
      * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */
@@ -59,7 +59,6 @@ public interface IoClient extends IoService {
      * @param remoteAddress Remote {@link SocketAddress} to connect
      * @param localAddress  Local {@link SocketAddress} to use while initiating connection to
      *                      remote {@link SocketAddress}
-     *
      * @return the {@link IoFuture} instance which is completed when the
      *         connection attempt initiated by this call succeeds or fails.
      */
