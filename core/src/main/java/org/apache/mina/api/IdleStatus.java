@@ -19,9 +19,6 @@
  */
 package org.apache.mina.api;
 
-import java.security.InvalidParameterException;
-
-
 /**
  * Represents the type of idleness of {@link IoSession}.
  * There are three types of idleness:
@@ -34,24 +31,21 @@ import java.security.InvalidParameterException;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public enum IdleStatus {
-    READ_IDLE,
-    WRITE_IDLE,
-    READ_WRITE_IDLE;
+    READ_IDLE("read idle"),
+    WRITE_IDLE("write idle"),
+    READ_WRITE_IDLE("both idle");
+
+    private final String description;
+
+    IdleStatus(String description) {
+        this.description = description;
+    }
 
     /**
      * Returns the string representation of this status.
      */
     @Override
     public String toString() {
-        switch (this) {
-            case READ_IDLE:
-                return "read idle";
-            case WRITE_IDLE:
-                return "write idle";
-            case READ_WRITE_IDLE:
-                return "both idle";
-            default:
-                throw new InvalidParameterException("unknown IdleStatus");
-        }
+        return description;
     }
 }
