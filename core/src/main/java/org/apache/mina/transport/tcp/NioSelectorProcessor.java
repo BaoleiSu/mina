@@ -42,7 +42,6 @@ import org.apache.mina.api.IoSession;
 import org.apache.mina.service.AbstractIoService;
 import org.apache.mina.service.SelectorProcessor;
 import org.apache.mina.service.SelectorStrategy;
-import org.apache.mina.session.WriteQueue;
 import org.apache.mina.session.WriteRequest;
 import org.apache.mina.transport.tcp.nio.NioTcpServer;
 import org.slf4j.Logger;
@@ -289,7 +288,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                                 LOGGER.debug("writable session : {}", key.attachment());
                                 NioTcpSession session = (NioTcpSession) key.attachment();
                                 // write from the session write queue
-                                WriteQueue queue = session.getWriteQueue();
+                                Queue<WriteRequest> queue = session.getWriteQueue();
                                 do {
                                     // get a write request from the queue
                                     WriteRequest wreq = queue.peek();

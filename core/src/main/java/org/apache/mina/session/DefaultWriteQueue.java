@@ -24,12 +24,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * The default implementation of the WriteRequest queue for storing writes to
  * process in the {@link org.apache.mina.api.IoSession}.
- * 
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
- * 
  */
-public class DefaultWriteQueue extends ConcurrentLinkedQueue<WriteRequest> implements WriteQueue {
+public class DefaultWriteQueue extends ConcurrentLinkedQueue<WriteRequest> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

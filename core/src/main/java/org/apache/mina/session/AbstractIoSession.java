@@ -20,6 +20,7 @@
 package org.apache.mina.session;
 
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,7 +80,7 @@ public abstract class AbstractIoSession implements IoSession {
     AtomicBoolean registeredForWrite = new AtomicBoolean();
     
     /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
-    private WriteQueue writeQueue = new DefaultWriteQueue();
+    private Queue<WriteRequest> writeQueue = new DefaultWriteQueue();
     
     /**
      * Create an {@link org.apache.mina.api.IoSession} with a unique identifier (
@@ -236,7 +237,7 @@ public abstract class AbstractIoSession implements IoSession {
     }
     
     @Override
-    public WriteQueue getWriteQueue() {
+    public Queue<WriteRequest> getWriteQueue() {
     	return writeQueue;
     }
 }

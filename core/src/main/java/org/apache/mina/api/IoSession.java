@@ -20,10 +20,11 @@
 package org.apache.mina.api;
 
 import java.net.SocketAddress;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.mina.service.SelectorProcessor;
-import org.apache.mina.session.WriteQueue;
+import org.apache.mina.session.WriteRequest;
 
 /**
  * A handle which represents a connection between two end-points regardless of
@@ -283,8 +284,8 @@ public interface IoSession {
 	public IoFuture<Void> writeWithFuture(Object message);
 
 	/**
-	 * Get the {@link WriteQueue} of this session. The write queue contains the pending writes.
+	 * Get the {@link Queue} of this session. The write queue contains the pending writes.
 	 * @return the write queue of this session
 	 */
-	public WriteQueue getWriteQueue();
+	public Queue<WriteRequest> getWriteQueue();
 }
