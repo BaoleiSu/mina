@@ -27,14 +27,11 @@ package org.apache.mina.api;
  */
 public interface IoFutureListener<V> {
     /**
-     * Called if there was an exception by the task as it was executing,
-     * {@link java.util.concurrent.ExecutionException}, or if there was
-     * an interruption while waiting for the task to complete,
-     * {@link InterruptedException}.
+     * Called if there was an exception by the task as it was executing.
      *
-     * @param e an instance of {@link InterruptedException} or {@link java.util.concurrent.ExecutionException}
+     * @param t an instance of {@link Throwable}
      */
-    void exception(Exception e);
+    void exception(Throwable t);
 
     /**
      * Called when the task has completed.  This method provides the result
