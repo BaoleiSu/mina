@@ -121,6 +121,12 @@ public interface IoFilterChain {
     void processSessionCreated(IoSession session);
 
     /**
+     * Call this method for processing a session open event using this chain.
+     * @param session {@link IoSession} the opened session
+     */
+    void processSessionOpen(IoSession session);
+
+    /**
      * Call this method for processing a received message using this chain.
      * This processing is done in reverse order.
      * @param session {@link IoSession} associated with this message

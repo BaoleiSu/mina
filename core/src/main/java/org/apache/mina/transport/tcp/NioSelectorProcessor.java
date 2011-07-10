@@ -166,7 +166,8 @@ public class NioSelectorProcessor implements SelectorProcessor {
             LOGGER.error("Unexpected exception, while configuring socket as non blocking", e);
         }
 
-        // TODO : event session created
+        // event session created
+        session.getFilterChain().processSessionCreated(session);
 
         // add the session to the queue for being added to the selector
         sessionsToConnect.add(session);
@@ -232,6 +233,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                             session.setConnected();
                             // fire the event
                             ((AbstractIoService) session.getService()).fireSessionCreated(session);
+                            session.getFilterChain().processSessionOpen(session);
                         }
                     }
 
@@ -280,9 +282,9 @@ public class NioSelectorProcessor implements SelectorProcessor {
                                     sessionsToClose.add(session);
                                 } else {
                                     // we have read some data
-                                    // TODO : push to the chain
-
-                                    readBuffer.rewind();
+                                    // limit at the current position & rewind buffer back to start & push to the chain
+                                    readBuffer.flip();
+                                    session.getFilterChain().processMessageReceived(session, readBuffer);
                                 }
 
                             }

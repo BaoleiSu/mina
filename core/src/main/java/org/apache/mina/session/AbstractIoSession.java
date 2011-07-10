@@ -26,9 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.mina.api.IoFilterChain;
 import org.apache.mina.api.IoFuture;
 import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoSession;
+import org.apache.mina.filterchain.DefaultIoFilterChain;
 import org.apache.mina.service.SelectorProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +84,9 @@ public abstract class AbstractIoSession implements IoSession {
 
     /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
     private Queue<WriteRequest> writeQueue = new DefaultWriteQueue();
+
+    /** the chain for filtering the events of this session */
+    private IoFilterChain filterChain = new DefaultIoFilterChain();
 
     /**
      * Create an {@link org.apache.mina.api.IoSession} with a unique identifier (
@@ -219,7 +224,7 @@ public abstract class AbstractIoSession implements IoSession {
         LOG.debug("writing message {} to session {}", message, this);
         if (state == SessionState.CLOSED || state == SessionState.CLOSING) {
             // TODO actually we just just shallow the message if the session is closed/closing
-            LOG.error("writing to closed or cloing session");
+            LOG.error("writing to closed or closing session");
             return;
         }
         writeQueue.add(new DefaultWriteRequest(message));
@@ -241,5 +246,10 @@ public abstract class AbstractIoSession implements IoSession {
     @Override
     public Queue<WriteRequest> getWriteQueue() {
         return writeQueue;
+    }
+
+    @Override
+    public IoFilterChain getFilterChain() {
+        return filterChain;
     }
 }

@@ -26,7 +26,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.mina.api.IoFilter;
 import org.apache.mina.api.IoFilterChain;
 import org.apache.mina.api.IoSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +104,19 @@ public class DefaultIoFilterChain implements IoFilterChain {
                 filter.sessionCreated(session);
             } catch (Exception e) {
                 LOG.error("Exception caught during processing session created event", e);
+                // we re-forward the catched Exception
+                processExceptionCaught(session, e);
+            }
+        }
+    }
+
+    @Override
+    public void processSessionOpen(IoSession session) {
+        for (IoFilter filter : chain) {
+            try {
+                filter.sessionOpened(session);
+            } catch (Exception e) {
+                LOG.error("Exception caught during processing session open event", e);
                 // we re-forward the catched Exception
                 processExceptionCaught(session, e);
             }
