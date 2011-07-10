@@ -144,8 +144,10 @@ public class NioSelectorProcessor implements SelectorProcessor {
         ServerSocketChannel channel = serverSocketChannels.get(address);
         channel.socket().close();
         channel.close();
-        serverSocketChannels.remove(channel);
-        LOGGER.debug("removing a server channel " + channel);
+        if (serverSocketChannels.remove(address) == null) {
+            LOGGER.warn("The server channel for address {} was already unbound", address);
+        }
+        LOGGER.debug("Removing a server channel {}", channel);
         serversToRemove.add(channel);
         wakeupWorker();
     }
@@ -374,7 +376,7 @@ public class NioSelectorProcessor implements SelectorProcessor {
                         worker = null;
                         break;
                     }
-                }finally {
+                } finally {
                     workerLock.unlock();
                 }
             }

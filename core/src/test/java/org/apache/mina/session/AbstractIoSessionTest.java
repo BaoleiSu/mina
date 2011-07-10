@@ -7,14 +7,13 @@ import junit.framework.Assert;
 import org.apache.mina.api.IoFuture;
 import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoSessionConfig;
-
 import org.junit.Test;
 
 public class AbstractIoSessionTest {
 
-    private final class DummySession extends AbstractIoSession {
+    private static final class DummySession extends AbstractIoSession {
         private DummySession(IoService service) {
-            super(service,null);
+            super(service, null);
         }
 
         @Override
@@ -76,8 +75,7 @@ public class AbstractIoSessionTest {
 
     @Test
     public void testGetId() {
-        Assert.assertNotSame((new DummySession(null)).getId(),
-                (new DummySession(null)).getId());
+        Assert.assertNotSame((new DummySession(null)).getId(), (new DummySession(null)).getId());
 
     }
 

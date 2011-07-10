@@ -54,7 +54,7 @@ public abstract class AbstractIoSession implements IoSession {
 
     /** The {@link SelectorProcessor} used for handling this session writing */
     private SelectorProcessor writeProcessor;
-    
+
     /** The number of bytes read since this session has been created */
     private volatile long readBytes;
 
@@ -72,16 +72,17 @@ public abstract class AbstractIoSession implements IoSession {
 
     /** unique identifier generator */
     private static final AtomicLong NEXT_ID = new AtomicLong(0);
-    
-    protected Object stateMonitor = new Object();
+
+    protected final Object stateMonitor = new Object();
+
     protected SessionState state;
 
     /** is this session registered for being polled for write ready events */
     AtomicBoolean registeredForWrite = new AtomicBoolean();
-    
+
     /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
     private Queue<WriteRequest> writeQueue = new DefaultWriteQueue();
-    
+
     /**
      * Create an {@link org.apache.mina.api.IoSession} with a unique identifier (
      * {@link org.apache.mina.api.IoSession#getId()}) and an associated {@link IoService}
@@ -95,16 +96,17 @@ public abstract class AbstractIoSession implements IoSession {
         creationTime = System.currentTimeMillis();
         this.service = service;
         this.writeProcessor = writeProcessor;
-        
+
         LOG.debug("Created new session with id : {}", id);
         synchronized (stateMonitor) {
-            this.state=SessionState.CREATED;
-		}
+            this.state = SessionState.CREATED;
+        }
     }
 
     public SessionState getState() {
         return state;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -208,36 +210,36 @@ public abstract class AbstractIoSession implements IoSession {
     public Set<Object> getAttributeNames() {
         return attributes.keySet();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void write(Object message) {
-        LOG.debug("writing message {} to session {}",message,this);
-    	if (state == SessionState.CLOSED || state == SessionState.CLOSING) {
-    		// TODO actually we just just shallow the message if the session is closed/closing
-    		LOG.error("writing to closed or cloing session");
-    		return;
-    	}
-    	writeQueue.add(new DefaultWriteRequest(message));
-    	
-    	// If it wasn't, we register this session as interested to write.
-    	// It's done in atomic fashion for avoiding two concurrent registering.
-    	if (!registeredForWrite.getAndSet(true)) {
-    		writeProcessor.flush(this);
-    	}
+        LOG.debug("writing message {} to session {}", message, this);
+        if (state == SessionState.CLOSED || state == SessionState.CLOSING) {
+            // TODO actually we just just shallow the message if the session is closed/closing
+            LOG.error("writing to closed or cloing session");
+            return;
+        }
+        writeQueue.add(new DefaultWriteRequest(message));
+
+        // If it wasn't, we register this session as interested to write.
+        // It's done in atomic fashion for avoiding two concurrent registering.
+        if (!registeredForWrite.getAndSet(true)) {
+            writeProcessor.flush(this);
+        }
     }
-    
+
     @Override
     public IoFuture<Void> writeWithFuture(Object message) {
-    	write(message);
-    	// TODO implements IoFuture
-    	return null;
+        write(message);
+        // TODO implements IoFuture
+        return null;
     }
-    
+
     @Override
     public Queue<WriteRequest> getWriteQueue() {
-    	return writeQueue;
+        return writeQueue;
     }
 }

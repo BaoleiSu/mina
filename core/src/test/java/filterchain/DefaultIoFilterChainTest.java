@@ -19,9 +19,7 @@
  */
 package filterchain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -95,7 +93,7 @@ public class DefaultIoFilterChainTest {
 
     }
 
-    private class DummyFilter implements IoFilter {
+    private static class DummyFilter implements IoFilter {
 
         String id;
 
