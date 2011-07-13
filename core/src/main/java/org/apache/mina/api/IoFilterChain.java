@@ -65,46 +65,7 @@ public interface IoFilterChain {
      *
      * @return  List of all {@link IoFilter} present in the chain
      */
-    List<IoFilter> getAll();
-
-    /**
-     * Add the specified {@link IoFilter} to the chain. The specific Filter is
-     * added at the end of the current processing chain
-     *
-     * @param ioFilter  Filter to be added in the Chain
-     */
-    void addLast(IoFilter ioFilter);
-
-    /**
-     * Add the specified {@link IoFilter} to the beginning of the chain. The filter is
-     * inserted before all the other filter currently in the chain.
-     * @param ioFilter
-     */
-    void addFirst(IoFilter ioFilter);
-
-    /**
-     * Insert the specified {@link IoFilter} before the filter at the given position
-     * @param position where we want to insert before our filter
-     * @param ioFilter the filter to be inserted
-     * @throws IndexOutOfBoundsException if the position is out of this list
-     */
-    void insertBefore(int position, IoFilter ioFilter) throws IndexOutOfBoundsException;
-
-    /**
-     * Insert the specified {@link IoFilter} after the filter at the given position
-     * @param position where we want to insert before our filter
-     * @param ioFilter the filter to be inserted
-     * @throws IndexOutOfBoundsException if the position is out of this list
-     */
-    void insertAfter(int position, IoFilter ioFilter);
-
-    /**
-     * Removes the Filter from the Chain.
-     *
-     * @param ioFilter  Filter to be removed
-     * @return <code>true</code> if successful
-     */
-    boolean removeFilter(IoFilter ioFilter);
+    List<IoFilter> getChain();
 
     /**
      * Call this method for processing a exception caught event using this chain.

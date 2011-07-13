@@ -27,7 +27,6 @@ package org.apache.mina.api;
  */
 public interface IoFilter {
 
-    // ---- Events Functions ---
     /**
      * Invoked from an I/O processor thread when a new connection has been created. Because this method is supposed to
      * be called from the same thread that handles I/O of multiple sessions, please implement this method to perform

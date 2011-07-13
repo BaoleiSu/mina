@@ -31,68 +31,6 @@ import org.junit.Test;
 
 public class DefaultIoFilterChainTest {
 
-    @Test
-    public void testChainModification() {
-        DefaultIoFilterChain filterChain = new DefaultIoFilterChain();
-
-        DummyFilter filterA = new DummyFilter("A");
-        DummyFilter filterB = new DummyFilter("B");
-        DummyFilter filterC = new DummyFilter("C");
-
-        // add two filters
-        filterChain.addFirst(filterB);
-        filterChain.addFirst(filterA);
-        System.out.println(filterChain);
-        assertEquals(filterChain.getAll().size(), 2);
-        List<IoFilter> l = filterChain.getAll();
-
-        assertEquals(l.get(0), filterA);
-        assertEquals(l.get(1), filterB);
-
-        assertTrue(filterChain.removeFilter(filterB));
-        assertEquals(filterChain.getAll().size(), 1);
-        assertFalse(filterChain.removeFilter(filterB));
-        assertEquals(filterChain.getAll().size(), 1);
-        assertTrue(filterChain.removeFilter(filterA));
-        assertTrue(filterChain.getAll().isEmpty());
-
-        // add three filter
-        filterChain.addLast(filterB);
-        filterChain.addLast(filterC);
-        filterChain.addFirst(filterA);
-        assertEquals(filterChain.getAll().size(), 3);
-        l = filterChain.getAll();
-
-        assertEquals(l.get(0), filterA);
-        assertEquals(l.get(1), filterB);
-        assertEquals(l.get(2), filterC);
-
-        filterChain.removeFilter(filterB);
-        assertEquals(filterChain.getAll().size(), 2);
-        l = filterChain.getAll();
-        assertEquals(l.get(0), filterA);
-        assertEquals(l.get(1), filterC);
-
-        filterChain.insertAfter(0, filterB);
-        assertEquals(filterChain.getAll().size(), 3);
-        l = filterChain.getAll();
-
-        assertEquals(l.get(0), filterA);
-        assertEquals(l.get(1), filterB);
-        assertEquals(l.get(2), filterC);
-        filterChain.removeFilter(filterB);
-
-        filterChain.insertBefore(1, filterB);
-
-        assertEquals(filterChain.getAll().size(), 3);
-        l = filterChain.getAll();
-
-        assertEquals(l.get(0), filterA);
-        assertEquals(l.get(1), filterB);
-        assertEquals(l.get(2), filterC);
-
-    }
-
     private static class DummyFilter implements IoFilter {
 
         String id;
