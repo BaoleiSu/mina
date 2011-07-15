@@ -30,6 +30,7 @@ import junit.framework.Assert;
 import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoServiceListener;
 import org.apache.mina.api.IoSession;
+import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.service.OneThreadSelectorStrategy;
 import org.apache.mina.service.SelectorFactory;
 import org.apache.mina.transport.tcp.NioSelectorProcessor;
@@ -46,45 +47,45 @@ import org.slf4j.LoggerFactory;
  */
 public class NioAcceptorTest {
 
-    static final private Logger LOG = LoggerFactory
-            .getLogger(NioAcceptorTest.class);
+    static final private Logger LOG = LoggerFactory.getLogger(NioAcceptorTest.class);
 
     @Test
     public void acceptorTest() {
         LOG.info("starting NioAcceptorTest");
 
-        OneThreadSelectorStrategy strategy = new OneThreadSelectorStrategy(
-                new SelectorFactory(NioSelectorProcessor.class));
+        OneThreadSelectorStrategy strategy = new OneThreadSelectorStrategy(new SelectorFactory(
+                NioSelectorProcessor.class));
         NioTcpServer acceptor = new NioTcpServer(strategy);
 
         acceptor.addListener(new IoServiceListener() {
-            
+
             @Override
             public void sessionDestroyed(IoSession session) {
-                LOG.info("session destroyed {}",session);
+                LOG.info("session destroyed {}", session);
 
             }
-            
+
             @Override
             public void sessionCreated(IoSession session) {
-                LOG.info("session created {}",session);
+                LOG.info("session created {}", session);
+                session.getFilterChain().getChain().add(new LoggingFilter("TestLoggingFilter"));
                 ByteBuffer bf = ByteBuffer.allocate("toto".length());
                 bf.put("toto".getBytes());
                 bf.flip();
                 session.write(bf);
             }
-            
+
             @Override
             public void serviceInactivated(IoService service) {
-                LOG.info("service deactivated {}",service);
+                LOG.info("service deactivated {}", service);
             }
-            
+
             @Override
             public void serviceActivated(IoService service) {
-                LOG.info("service activated {}",service);
+                LOG.info("service activated {}", service);
             }
         });
-        
+
         try {
             SocketAddress address = new InetSocketAddress(9999);
             acceptor.bind(address);

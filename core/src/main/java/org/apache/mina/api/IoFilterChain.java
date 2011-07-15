@@ -68,14 +68,6 @@ public interface IoFilterChain {
     List<IoFilter> getChain();
 
     /**
-     * Call this method for processing a exception caught event using this chain.
-     * Any spawned exception during this processing will be caught and logged as error.
-     * @param session {@link IoSession} associated with invocation
-     * @param cause Real {@link Throwable} which broke the normal chain processing
-     */
-    void processExceptionCaught(IoSession session, Throwable cause);
-
-    /**
      * Call this method for processing a session created event using this chain.
      * @param session {@link IoSession} the freshly created session
      */

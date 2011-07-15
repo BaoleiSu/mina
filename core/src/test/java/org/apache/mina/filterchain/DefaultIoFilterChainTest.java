@@ -17,17 +17,11 @@
  *  under the License.
  *
  */
-package filterchain;
-
-import static org.junit.Assert.*;
-
-import java.util.List;
+package org.apache.mina.filterchain;
 
 import org.apache.mina.api.IdleStatus;
 import org.apache.mina.api.IoFilter;
 import org.apache.mina.api.IoSession;
-import org.apache.mina.filterchain.DefaultIoFilterChain;
-import org.junit.Test;
 
 public class DefaultIoFilterChainTest {
 
@@ -40,33 +34,29 @@ public class DefaultIoFilterChainTest {
         }
 
         @Override
-        public void sessionCreated(IoSession session) throws Exception {
+        public void sessionCreated(IoSession session) {
         }
 
         @Override
-        public void sessionOpened(IoSession session) throws Exception {
+        public void sessionOpened(IoSession session) {
         }
 
         @Override
-        public void sessionClosed(IoSession session) throws Exception {
+        public void sessionClosed(IoSession session) {
         }
 
         @Override
-        public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
+        public void sessionIdle(IoSession session, IdleStatus status) {
         }
 
         @Override
-        public Object messageReceived(IoSession session, Object message) throws Exception {
+        public Object messageReceived(IoSession session, Object message) {
             return message;
         }
 
         @Override
-        public Object messageWriting(IoSession session, Object message) throws Exception {
+        public Object messageWriting(IoSession session, Object message) {
             return message;
-        }
-
-        @Override
-        public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         }
 
         public String toString() {

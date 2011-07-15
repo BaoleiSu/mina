@@ -35,33 +35,29 @@ public interface IoFilter {
      *
      * @param session {@link IoSession} associated with the invocation
      *
-     * @throws Exception Exception If an error occurs while processing
      */
-    void sessionCreated(IoSession session) throws Exception;
+    void sessionCreated(IoSession session);
 
     /**
      * Invoked when a connection has been opened.
      *
      * @param session {@link IoSession} associated with the invocation
-     * @throws Exception Exception If an error occurs while processing
      */
-    void sessionOpened(IoSession session) throws Exception;
+    void sessionOpened(IoSession session);
 
     /**
      * Invoked when a connection is closed.
      *
      * @param session {@link IoSession} associated with the invocation
-     * @throws Exception Exception If an error occurs while processing
      */
-    void sessionClosed(IoSession session) throws Exception;
+    void sessionClosed(IoSession session);
 
     /**
      * Invoked with the related {@link IdleStatus} when a connection becomes idle.
      *
      * @param session {@link IoSession} associated with the invocation
-     * @throws Exception Exception If an error occurs while processing
      */
-    void sessionIdle(IoSession session, IdleStatus status) throws Exception;
+    void sessionIdle(IoSession session, IdleStatus status);
 
     /**
      * Invoked when a message is received.
@@ -69,26 +65,16 @@ public interface IoFilter {
      * @param session {@link IoSession} associated with the invocation
      * @param message the incoming message to process
      * @return the message after processing
-     * @throws Exception Exception If an error occurs while processing
      */
-    Object messageReceived(IoSession session, Object message) throws Exception;
+    Object messageReceived(IoSession session, Object message);
 
     /**
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.
      *
      * @param session {@link IoSession} associated with the invocation
      * @param message the message to process before writing
-     * @throws Exception Exception If an error occurs while processing
      * @return the message after processing
      */
-    Object messageWriting(IoSession session, Object message) throws Exception;
+    Object messageWriting(IoSession session, Object message);
 
-    /**
-     * Invoked when an exception occurs while executing the method
-     *
-     * @param session {@link IoSession} associated with invocation
-     * @param cause Real {@link Throwable} which broke the normal chain processing
-     * @throws Exception If an error occurs while processing
-     */
-    void exceptionCaught(IoSession session, Throwable cause) throws Exception;
 }
