@@ -74,6 +74,13 @@ public class DefaultIoFilterChain implements IoFilterChain {
     }
 
     @Override
+    public void processSessionClosed(IoSession session) {
+        for (IoFilter filter : chain) {
+            filter.sessionClosed(session);
+        }
+    }
+
+    @Override
     public Object processMessageReceived(IoSession session, Object message) {
         for (IoFilter filter : chain) {
             message = filter.messageReceived(session, message);

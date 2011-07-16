@@ -80,6 +80,12 @@ public interface IoFilterChain {
     void processSessionOpen(IoSession session);
 
     /**
+     * Call this method for processing a session closed event using the chain.
+     * @param session {@link IoSession} the closed session
+     */
+    void processSessionClosed(IoSession session);
+
+    /**
      * Call this method for processing a received message using this chain.
      * This processing is done in reverse order.
      * @param session {@link IoSession} associated with this message

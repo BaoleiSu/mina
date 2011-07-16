@@ -248,7 +248,9 @@ public class NioSelectorProcessor implements SelectorProcessor {
                             // needed ?
                             session.getSocketChannel().close();
                             // fire the event
+                            session.getFilterChain().processSessionClosed(session);
                             ((AbstractIoService) session.getService()).fireSessionDestroyed(session);
+
                         }
                     }
 

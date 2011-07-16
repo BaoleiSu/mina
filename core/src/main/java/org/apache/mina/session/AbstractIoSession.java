@@ -227,6 +227,10 @@ public abstract class AbstractIoSession implements IoSession {
             LOG.error("writing to closed or closing session");
             return;
         }
+
+        // process the queue
+        message = getFilterChain().processMessageWriting(this, message);
+
         writeQueue.add(new DefaultWriteRequest(message));
 
         // If it wasn't, we register this session as interested to write.
