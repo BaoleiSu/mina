@@ -230,6 +230,8 @@ public abstract class AbstractIoSession implements IoSession {
 
         // process the queue
         message = getFilterChain().processMessageWriting(this, message);
+        if (message == null)
+            return;
 
         writeQueue.add(new DefaultWriteRequest(message));
 

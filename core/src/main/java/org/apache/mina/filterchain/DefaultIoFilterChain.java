@@ -81,11 +81,14 @@ public class DefaultIoFilterChain implements IoFilterChain {
     }
 
     @Override
-    public Object processMessageReceived(IoSession session, Object message) {
+    public void processMessageReceived(IoSession session, Object message) {
         for (IoFilter filter : chain) {
             message = filter.messageReceived(session, message);
+            if (message == null) {
+                // no message was produced by the filter, it's probably accumulating messages
+                break;
+            }
         }
-        return message;
     }
 
     @Override
@@ -93,6 +96,11 @@ public class DefaultIoFilterChain implements IoFilterChain {
         int len = chain.size();
         for (int i = 1; i <= len; i++) {
             message = chain.get(len - i).messageWriting(session, message);
+            if (message == null) {
+                // no message was produced by the filter, it's probably accumulating messages
+                return null;
+            }
+
         }
         return message;
     }
