@@ -30,9 +30,9 @@
     <name>Apache MINA Project</name>
     <url>http://mina.apache.org/</url>
   </organization>
+
   <groupId>org.apache.mina</groupId>
   <version>3.0.0-M1-SNAPSHOT</version>
-  <!--artifactId>build</artifactId-->
   <artifactId>mina-parent</artifactId>
   <name>Apache MINA</name>
   <packaging>pom</packaging>
@@ -67,7 +67,7 @@
     </notifiers>
   </ciManagement>
 
-  <description>Apache MINA is a network application framework which helps users develop high performance and highly scalable network applications easily.  It provides an abstract event-driven asynchronous API over various transports such as TCP/IP and UDP/IP via Java NIO.</description>
+  <description>Apache MINA is a network application framework which helps users develop high performance and highly scalable network applications easily. It provides an abstract event-driven asynchronous API over various transports such as TCP/IP and UDP/IP via Java NIO.</description>
 
   <licenses>
     <license>
@@ -81,18 +81,18 @@
     <version.slf4j.api>1.5.11</version.slf4j.api>
     <version.slf4j.log4j12>1.5.11</version.slf4j.log4j12>
     <version.slf4j.jcl.over.slf4j>1.5.11</version.slf4j.jcl.over.slf4j>
-      <version.log4j>1.2.14</version.log4j>
-      <version.junit>4.7</version.junit>
-  </properties>  
+    <version.log4j>1.2.14</version.log4j>
+    <version.junit>4.7</version.junit>
+  </properties>
 
 
   <modules>
     <module>core</module>
   </modules>
 
-    <dependencyManagement>
+  <dependencyManagement>
     <dependencies>
-    <!-- Logging -->
+      <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -151,7 +151,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -268,7 +268,7 @@
         </property>
       </activation>
       <build>
-         <plugins>
+        <plugins>
           <plugin>
             <artifactId>maven-eclipse-plugin</artifactId>
             <configuration>

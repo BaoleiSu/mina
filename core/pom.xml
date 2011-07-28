@@ -26,9 +26,11 @@
     <artifactId>mina-parent</artifactId>
     <version>3.0.0-M1-SNAPSHOT</version>
   </parent>
+
   <artifactId>mina-core</artifactId>
   <name>Apache MINA Core</name>
   <packaging>bundle</packaging>
+
   <properties>
     <symbolicName>${project.groupId}.core</symbolicName>
     <exportedPackage>${project.groupId}</exportedPackage>
