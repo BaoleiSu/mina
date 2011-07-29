@@ -26,8 +26,12 @@ package org.apache.mina.api;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface IoFutureListener<V> {
+
     /**
      * Called if there was an exception by the task as it was executing.
+     * Expect {@link java.util.concurrent.CancellationException} of the
+     * future was canceled or {@link java.util.concurrent.ExecutionException}
+     * if there was an error executing the task the future was waiting on.
      *
      * @param t an instance of {@link Throwable}
      */
