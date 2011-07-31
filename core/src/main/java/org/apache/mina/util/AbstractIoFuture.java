@@ -35,6 +35,17 @@ import org.apache.mina.api.IoFutureListener;
 
 
 /**
+ * An abstract implementation of {@link IoFuture}.  Owners of this future
+ * should implement {@link #cancelOwner(boolean)} to receive notifications of
+ * when the future should be canceled.
+ * <p/>
+ * Concrete implementations of this abstract class should consider overriding
+ * the two methods {@link #scheduleResult(org.apache.mina.api.IoFutureListener, Object)}
+ * and {@link #scheduleException(org.apache.mina.api.IoFutureListener, Throwable)}
+ * so that listeners are called in a separate thread.  The default
+ * implementations may end up calling the listener in the same thread that is
+ * registering the listener, before the registration has completed.
+ *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public abstract class AbstractIoFuture<V> implements IoFuture<V> {
