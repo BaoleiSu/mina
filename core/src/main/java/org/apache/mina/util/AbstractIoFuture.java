@@ -36,7 +36,7 @@ import org.apache.mina.api.IoFutureListener;
 
 /**
  * An abstract implementation of {@link IoFuture}.  Owners of this future
- * should implement {@link #cancelOwner(boolean)} to receive notifications of
+ * must implement {@link #cancelOwner(boolean)} to receive notifications of
  * when the future should be canceled.
  * <p/>
  * Concrete implementations of this abstract class should consider overriding
