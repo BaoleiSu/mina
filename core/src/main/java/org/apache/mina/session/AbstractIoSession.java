@@ -229,10 +229,11 @@ public abstract class AbstractIoSession implements IoSession {
         }
 
         // process the queue
-        message = getFilterChain().processMessageWriting(this, message);
-        if (message == null)
-            return;
+        getFilterChain().processMessageWriting(this, message);
 
+    }
+
+    public void enqueueWriteRequest(Object message) {
         writeQueue.add(new DefaultWriteRequest(message));
 
         // If it wasn't, we register this session as interested to write.
@@ -240,6 +241,7 @@ public abstract class AbstractIoSession implements IoSession {
         if (!registeredForWrite.getAndSet(true)) {
             writeProcessor.flush(this);
         }
+
     }
 
     @Override

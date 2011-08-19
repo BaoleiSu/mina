@@ -22,6 +22,8 @@ package org.apache.mina.filter.logging;
 import org.apache.mina.api.IdleStatus;
 import org.apache.mina.api.IoFilter;
 import org.apache.mina.api.IoSession;
+import org.apache.mina.filterchain.ReadFilterChainController;
+import org.apache.mina.filterchain.WriteFilterChainController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,6 +156,7 @@ public class LoggingFilter implements IoFilter {
     @Override
     public void sessionOpened(IoSession session) {
         log(sessionOpenedLevel, "OPENED");
+
     }
 
     @Override
@@ -167,15 +170,17 @@ public class LoggingFilter implements IoFilter {
     }
 
     @Override
-    public Object messageReceived(IoSession session, Object message) {
+    public void messageReceived(IoSession session, Object message, ReadFilterChainController controller,
+            int currentPosition) {
         log(messageReceivedLevel, "RECEIVED: {}", message);
-        return message;
+        controller.callReadNextFilter(session, currentPosition, message);
     }
 
     @Override
-    public Object messageWriting(IoSession session, Object message) {
+    public void messageWriting(IoSession session, Object message, WriteFilterChainController controller,
+            int currentPosition) {
         log(messageWritingLevel, "WRITTING: {}", message);
-        return message;
+        controller.callWriteNextFilter(session, currentPosition, message);
     }
 
     //=========================

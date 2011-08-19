@@ -49,18 +49,20 @@ public class DefaultIoFilterChainTest {
         public void sessionIdle(IoSession session, IdleStatus status) {
         }
 
-        @Override
-        public Object messageReceived(IoSession session, Object message) {
-            return message;
-        }
-
-        @Override
-        public Object messageWriting(IoSession session, Object message) {
-            return message;
-        }
-
         public String toString() {
             return "DummyFilter(" + id + ")";
+        }
+
+        @Override
+        public void messageReceived(IoSession session, Object message, ReadFilterChainController controller,
+                int currentPosition) {
+            controller.callReadNextFilter(session, currentPosition, message);
+        }
+
+        @Override
+        public void messageWriting(IoSession session, Object message, WriteFilterChainController controller,
+                int currentPosition) {
+            controller.callWriteNextFilter(session, currentPosition, message);
         }
     }
 

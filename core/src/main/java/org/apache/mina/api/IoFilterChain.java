@@ -95,9 +95,9 @@ public interface IoFilterChain {
 
     /**
      * Call this method for processing a message for writing using this chain.
+     * Once the message is processed, the resulting ByteBuffers are enqueued in the session write requests queue
      * @param session {@link IoSession} associated with this message
      * @param message the message to write
-     * @return the message after the processing
      */
-    Object processMessageWriting(IoSession session, Object message);
+    void processMessageWriting(IoSession session, Object message);
 }

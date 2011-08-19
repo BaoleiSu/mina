@@ -28,7 +28,7 @@ import org.apache.mina.api.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultIoFilterChain implements IoFilterChain {
+public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainController, WriteFilterChainController {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultIoFilterChain.class);
 
@@ -61,6 +61,7 @@ public class DefaultIoFilterChain implements IoFilterChain {
 
     @Override
     public void processSessionCreated(IoSession session) {
+        LOG.debug("processing session created event");
         for (IoFilter filter : chain) {
             filter.sessionCreated(session);
         }
@@ -68,6 +69,7 @@ public class DefaultIoFilterChain implements IoFilterChain {
 
     @Override
     public void processSessionOpen(IoSession session) {
+        LOG.debug("processing session open event");
         for (IoFilter filter : chain) {
             filter.sessionOpened(session);
         }
@@ -75,6 +77,7 @@ public class DefaultIoFilterChain implements IoFilterChain {
 
     @Override
     public void processSessionClosed(IoSession session) {
+        LOG.debug("processing session closed event");
         for (IoFilter filter : chain) {
             filter.sessionClosed(session);
         }
@@ -82,27 +85,24 @@ public class DefaultIoFilterChain implements IoFilterChain {
 
     @Override
     public void processMessageReceived(IoSession session, Object message) {
-        for (IoFilter filter : chain) {
-            message = filter.messageReceived(session, message);
-            if (message == null) {
-                // no message was produced by the filter, it's probably accumulating messages
-                break;
-            }
+        LOG.debug("processing message '{}' received event ", message);
+        if (chain.isEmpty()) {
+            LOG.debug("Nothing to do, the chain is empty");
+        } else {
+            // we call the first filter, it's supposed to call the next ones using the filter chain controller
+            chain.get(0).messageReceived(session, message, this, 0);
         }
     }
 
     @Override
-    public Object processMessageWriting(IoSession session, Object message) {
-        int len = chain.size();
-        for (int i = 1; i <= len; i++) {
-            message = chain.get(len - i).messageWriting(session, message);
-            if (message == null) {
-                // no message was produced by the filter, it's probably accumulating messages
-                return null;
-            }
-
+    public void processMessageWriting(IoSession session, Object message) {
+        LOG.debug("processing message '{}' writing event ", message);
+        if (chain.isEmpty()) {
+            LOG.debug("Nothing to do, the chain is empty");
+        } else {
+            // we call the first filter, it's supposed to call the next ones using the filter chain controller
+            chain.get(0).messageWriting(session, message, this, 0);
         }
-        return message;
     }
 
     @Override
@@ -113,6 +113,27 @@ public class DefaultIoFilterChain implements IoFilterChain {
             bldr.append(index).append(":").append(filter).append(", ");
         }
         return bldr.append("}").toString();
+    }
+
+    @Override
+    public void callWriteNextFilter(IoSession session, int currentPosition, Object message) {
+        currentPosition--;
+        if (currentPosition < 0 || chain.size() == 0) {
+            // end of chain processing
+            session.enqueueWriteRequest(message);
+        } else {
+            chain.get(currentPosition).messageWriting(session, message, this, currentPosition);
+        }
+    }
+
+    @Override
+    public void callReadNextFilter(IoSession session, int currentPosition, Object message) {
+        currentPosition++;
+        if (currentPosition >= chain.size()) {
+            // end of chain processing
+        } else {
+            chain.get(currentPosition).messageReceived(session, message, this, currentPosition);
+        }
     }
 
 }

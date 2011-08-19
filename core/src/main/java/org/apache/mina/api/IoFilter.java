@@ -20,6 +20,9 @@
 
 package org.apache.mina.api;
 
+import org.apache.mina.filterchain.ReadFilterChainController;
+import org.apache.mina.filterchain.WriteFilterChainController;
+
 /**
  * Filter are interceptors/processors for incoming data received/sent.
  *
@@ -64,17 +67,14 @@ public interface IoFilter {
      *
      * @param session {@link IoSession} associated with the invocation
      * @param message the incoming message to process
-     * @return the message after processing
      */
-    Object messageReceived(IoSession session, Object message);
+    void messageReceived(IoSession session, Object message, ReadFilterChainController controller, int currentPosition);
 
     /**
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.
      *
      * @param session {@link IoSession} associated with the invocation
      * @param message the message to process before writing
-     * @return the message after processing
      */
-    Object messageWriting(IoSession session, Object message);
-
+    void messageWriting(IoSession session, Object message, WriteFilterChainController controller, int currentPosition);
 }
