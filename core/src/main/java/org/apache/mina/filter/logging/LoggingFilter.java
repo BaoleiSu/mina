@@ -170,17 +170,15 @@ public class LoggingFilter implements IoFilter {
     }
 
     @Override
-    public void messageReceived(IoSession session, Object message, ReadFilterChainController controller,
-            int currentPosition) {
+    public void messageReceived(IoSession session, Object message, ReadFilterChainController controller) {
         log(messageReceivedLevel, "RECEIVED: {}", message);
-        controller.callReadNextFilter(session, currentPosition, message);
+        controller.callReadNextFilter(session, message);
     }
 
     @Override
-    public void messageWriting(IoSession session, Object message, WriteFilterChainController controller,
-            int currentPosition) {
+    public void messageWriting(IoSession session, Object message, WriteFilterChainController controller) {
         log(messageWritingLevel, "WRITTING: {}", message);
-        controller.callWriteNextFilter(session, currentPosition, message);
+        controller.callWriteNextFilter(session, message);
     }
 
     //=========================

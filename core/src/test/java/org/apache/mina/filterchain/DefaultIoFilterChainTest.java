@@ -54,15 +54,13 @@ public class DefaultIoFilterChainTest {
         }
 
         @Override
-        public void messageReceived(IoSession session, Object message, ReadFilterChainController controller,
-                int currentPosition) {
-            controller.callReadNextFilter(session, currentPosition, message);
+        public void messageReceived(IoSession session, Object message, ReadFilterChainController controller) {
+            controller.callReadNextFilter(session, message);
         }
 
         @Override
-        public void messageWriting(IoSession session, Object message, WriteFilterChainController controller,
-                int currentPosition) {
-            controller.callWriteNextFilter(session, currentPosition, message);
+        public void messageWriting(IoSession session, Object message, WriteFilterChainController controller) {
+            controller.callWriteNextFilter(session, message);
         }
     }
 

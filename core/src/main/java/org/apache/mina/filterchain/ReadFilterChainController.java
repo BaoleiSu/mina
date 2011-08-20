@@ -29,5 +29,5 @@ import org.apache.mina.api.IoSession;
  */
 public interface ReadFilterChainController {
 
-    void callReadNextFilter(IoSession session, int currentPosition, Object message);
+    void callReadNextFilter(IoSession session, Object message);
 }

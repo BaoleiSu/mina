@@ -28,5 +28,5 @@ import org.apache.mina.api.IoSession;
  *
  */
 public interface WriteFilterChainController {
-    void callWriteNextFilter(IoSession session, int currentPosition, Object message);
+    void callWriteNextFilter(IoSession session, Object message);
 }

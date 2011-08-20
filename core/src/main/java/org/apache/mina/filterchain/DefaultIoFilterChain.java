@@ -83,16 +83,21 @@ public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainContr
         }
     }
 
+    private int readChainPosition;
+
     @Override
     public void processMessageReceived(IoSession session, Object message) {
         LOG.debug("processing message '{}' received event ", message);
         if (chain.isEmpty()) {
             LOG.debug("Nothing to do, the chain is empty");
         } else {
+            readChainPosition = 0;
             // we call the first filter, it's supposed to call the next ones using the filter chain controller
-            chain.get(0).messageReceived(session, message, this, 0);
+            chain.get(readChainPosition).messageReceived(session, message, this);
         }
     }
+
+    private int writeChainPosition;
 
     @Override
     public void processMessageWriting(IoSession session, Object message) {
@@ -100,8 +105,30 @@ public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainContr
         if (chain.isEmpty()) {
             LOG.debug("Nothing to do, the chain is empty");
         } else {
+            writeChainPosition = chain.size() - 1;
             // we call the first filter, it's supposed to call the next ones using the filter chain controller
-            chain.get(0).messageWriting(session, message, this, 0);
+            chain.get(writeChainPosition).messageWriting(session, message, this);
+        }
+    }
+
+    @Override
+    public void callWriteNextFilter(IoSession session, Object message) {
+        writeChainPosition--;
+        if (writeChainPosition < 0 || chain.size() == 0) {
+            // end of chain processing
+            session.enqueueWriteRequest(message);
+        } else {
+            chain.get(writeChainPosition).messageWriting(session, message, this);
+        }
+    }
+
+    @Override
+    public void callReadNextFilter(IoSession session, Object message) {
+        readChainPosition++;
+        if (readChainPosition >= chain.size()) {
+            // end of chain processing
+        } else {
+            chain.get(readChainPosition).messageReceived(session, message, this);
         }
     }
 
@@ -114,26 +141,4 @@ public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainContr
         }
         return bldr.append("}").toString();
     }
-
-    @Override
-    public void callWriteNextFilter(IoSession session, int currentPosition, Object message) {
-        currentPosition--;
-        if (currentPosition < 0 || chain.size() == 0) {
-            // end of chain processing
-            session.enqueueWriteRequest(message);
-        } else {
-            chain.get(currentPosition).messageWriting(session, message, this, currentPosition);
-        }
-    }
-
-    @Override
-    public void callReadNextFilter(IoSession session, int currentPosition, Object message) {
-        currentPosition++;
-        if (currentPosition >= chain.size()) {
-            // end of chain processing
-        } else {
-            chain.get(currentPosition).messageReceived(session, message, this, currentPosition);
-        }
-    }
-
 }

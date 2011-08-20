@@ -68,7 +68,7 @@ public interface IoFilter {
      * @param session {@link IoSession} associated with the invocation
      * @param message the incoming message to process
      */
-    void messageReceived(IoSession session, Object message, ReadFilterChainController controller, int currentPosition);
+    void messageReceived(IoSession session, Object message, ReadFilterChainController controller);
 
     /**
      * Invoked when a message is under writing. The filter is supposed to apply the needed transformation.
@@ -76,5 +76,5 @@ public interface IoFilter {
      * @param session {@link IoSession} associated with the invocation
      * @param message the message to process before writing
      */
-    void messageWriting(IoSession session, Object message, WriteFilterChainController controller, int currentPosition);
+    void messageWriting(IoSession session, Object message, WriteFilterChainController controller);
 }
