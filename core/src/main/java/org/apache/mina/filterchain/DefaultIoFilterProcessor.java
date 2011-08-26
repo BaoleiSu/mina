@@ -19,18 +19,18 @@
  */
 package org.apache.mina.filterchain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.mina.api.IoFilter;
-import org.apache.mina.api.IoFilterChain;
+import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainController, WriteFilterChainController {
+public class DefaultIoFilterProcessor implements IoFilterProcessor, ReadFilterChainController,
+        WriteFilterChainController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultIoFilterChain.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultIoFilterProcessor.class);
 
     /**
      * The list of {@link IoFilter} implementing this chain.
@@ -38,25 +38,10 @@ public class DefaultIoFilterChain implements IoFilterChain, ReadFilterChainContr
     private final List<IoFilter> chain;
 
     /**
-     * The instance of {@link DefaultIoFilterChain} with an empty chain.
+     * The instance of {@link DefaultIoFilterProcessor} with the {@link IoService} chain.
      */
-    public DefaultIoFilterChain() {
-        this.chain = new ArrayList<IoFilter>();
-    }
-
-    /**
-     * The instance of {@link DefaultIoFilterChain} is initialized with a copy
-     * of a filter chain.
-     *
-     * @param chain the chain to be copied
-     */
-    public DefaultIoFilterChain(List<IoFilter> chain) {
-        this.chain = new ArrayList<IoFilter>(chain);
-    }
-
-    @Override
-    public List<IoFilter> getChain() {
-        return chain;
+    public DefaultIoFilterProcessor(List<IoFilter> chain) {
+        this.chain = chain;
     }
 
     @Override

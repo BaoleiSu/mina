@@ -20,10 +20,12 @@
 package org.apache.mina.service.client;
 
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.mina.api.IoClient;
-import org.apache.mina.api.*;
+import org.apache.mina.api.IoFilter;
+import org.apache.mina.api.IoFuture;
 import org.apache.mina.api.IoServiceListener;
 import org.apache.mina.api.IoSession;
 import org.apache.mina.service.AbstractIoService;
@@ -33,7 +35,7 @@ import org.apache.mina.service.AbstractIoService;
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class AbstractIoClient extends AbstractIoService implements IoClient {
+public abstract class AbstractIoClient extends AbstractIoService implements IoClient {
     /**
      * Create an new AbstractIoClient instance
      */
@@ -47,11 +49,11 @@ public class AbstractIoClient extends AbstractIoService implements IoClient {
     }
 
     @Override
-    public void addListener( IoServiceListener listener ) {
+    public void addListener(IoServiceListener listener) {
     }
 
     @Override
-    public void removeListener( IoServiceListener listener ) {
+    public void removeListener(IoServiceListener listener) {
     }
 
     @Override
@@ -60,17 +62,28 @@ public class AbstractIoClient extends AbstractIoService implements IoClient {
     }
 
     @Override
-    public void setConnectTimeoutMillis( long connectTimeoutInMillis ) {
+    public void setConnectTimeoutMillis(long connectTimeoutInMillis) {
     }
 
     @Override
-    public IoFuture<IoSession> connect( SocketAddress remoteAddress ) {
+    public IoFuture<IoSession> connect(SocketAddress remoteAddress) {
         return null;
     }
 
     @Override
-    public IoFuture<IoSession> connect( SocketAddress remoteAddress, SocketAddress localAddress ) {
+    public IoFuture<IoSession> connect(SocketAddress remoteAddress, SocketAddress localAddress) {
         return null;
     }
 
+    private List<IoFilter> filters;
+
+    @Override
+    public List<IoFilter> getFilters() {
+        return filters;
+    }
+
+    @Override
+    public void setFilters(List<IoFilter> filters) {
+        this.filters = filters;
+    }
 }

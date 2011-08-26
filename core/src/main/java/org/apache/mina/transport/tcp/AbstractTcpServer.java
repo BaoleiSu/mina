@@ -21,8 +21,10 @@ package org.apache.mina.transport.tcp;
 
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.mina.api.IoFilter;
 import org.apache.mina.service.server.AbstractIoServer;
 
 /**
@@ -37,25 +39,24 @@ public class AbstractTcpServer extends AbstractIoServer {
     protected AbstractTcpServer() {
         super();
     }
-    
+
     @Override
     public Set<SocketAddress> getLocalAddresses() {
         return null;
     }
 
-
     @Override
-    public void bind( SocketAddress... localAddress ) throws IOException {
+    public void bind(SocketAddress... localAddress) throws IOException {
     }
-
 
     @Override
     public void unbindAll() throws IOException {
     }
 
-
     @Override
-    public void unbind( SocketAddress... localAddresses ) throws IOException {
+    public void unbind(SocketAddress... localAddresses) throws IOException {
     }
+
+    private List<IoFilter> filters;
 
 }

@@ -19,6 +19,10 @@
  */
 package org.apache.mina.service.server;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.mina.api.IoFilter;
 import org.apache.mina.api.IoServer;
 import org.apache.mina.service.AbstractIoService;
 
@@ -33,5 +37,17 @@ public abstract class AbstractIoServer extends AbstractIoService implements IoSe
      */
     protected AbstractIoServer() {
         super();
+    }
+
+    private List<IoFilter> filters;
+
+    @Override
+    public List<IoFilter> getFilters() {
+        return filters;
+    }
+
+    @Override
+    public void setFilters(List<IoFilter> filters) {
+        this.filters = Collections.unmodifiableList(filters);
     }
 }

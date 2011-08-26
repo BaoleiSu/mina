@@ -24,9 +24,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.mina.api.IoFilter;
 import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoServiceListener;
 import org.apache.mina.api.IoSession;
@@ -57,6 +60,11 @@ public class NioAcceptorTest {
                 NioSelectorProcessor.class));
         NioTcpServer acceptor = new NioTcpServer(strategy);
 
+        // create the fitler chain for this service
+        List<IoFilter> filters = new ArrayList<IoFilter>();
+        filters.add(new LoggingFilter("TestLoggingFilter"));
+        acceptor.setFilters(filters);
+
         acceptor.addListener(new IoServiceListener() {
 
             @Override
@@ -68,7 +76,7 @@ public class NioAcceptorTest {
             @Override
             public void sessionCreated(IoSession session) {
                 LOG.info("session created {}", session);
-                session.getFilterChain().getChain().add(new LoggingFilter("TestLoggingFilter"));
+
                 ByteBuffer bf = ByteBuffer.allocate("toto".length());
                 bf.put("toto".getBytes());
                 bf.flip();

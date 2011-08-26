@@ -19,6 +19,7 @@
  */
 package org.apache.mina.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.mina.service.IoHandler;
@@ -30,7 +31,7 @@ import org.apache.mina.service.IoHandler;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface IoService {
-    
+
     /**
      * Returns the map of all sessions which are currently managed by this
      * service.  The key of map is the {@link IoSession#getId() ID} of the
@@ -57,9 +58,22 @@ public interface IoService {
      */
 
     IoHandler getHandler();
+
     /**
      * Sets the handler which will handle all connections managed by this service. The handler
      * can only be set before the service is started.
      */
     void setHandler(IoHandler handler);
+
+    /**
+     * Get the list of filters installed on this service
+     * @return
+     */
+    List<IoFilter> getFilters();
+
+    /**
+     * Set the list of filters for this service. Must be called before the service is bound/connected
+     */
+    void setFilters(List<IoFilter> filters);
+
 }

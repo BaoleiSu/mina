@@ -18,54 +18,18 @@
  *
  */
 
-package org.apache.mina.api;
+package org.apache.mina.filterchain;
 
-import java.util.List;
+import org.apache.mina.api.IoSession;
+
 
 /**
  * An implementation that is responsible for performing IO (network, file or
  * any other kind of IO)
  *
- * The chain will look something like
- *
- *         Upstream Chain                 DownStream
- *
- *        IoHandler Filter                IoHandler Filter
- *              /|\                              |
- *               |                              \|/
- *           Filter N                        Filter D
- *              /|\                              |
- *               |                              \|/
- *           Filter C                        Filter E
- *              /|\                              |
- *               |                              \|/
- *           Filter B                        Filter F
- *              /|\                              |
- *               |                              \|/
- *           Filter A                      Acceptor/Socket
- *              /|\
- *               |
- *         Acceptor/Socket
- *
- *
- *
- * TODO
- * 1. How to handle the insertion in between the Filter's. Do we need an API?
- * 2. What to do with the fireEvent* methods?
- *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public interface IoFilterChain {
-
-    /**
-     * Returns all the filters that are currently present in the chain.
-     * Useful to the know the current processing chain. The chain is returned
-     * in the order of processing (the first filter in the list shall be the
-     * first one to be processed)
-     *
-     * @return  List of all {@link IoFilter} present in the chain
-     */
-    List<IoFilter> getChain();
+public interface IoFilterProcessor {
 
     /**
      * Call this method for processing a session created event using this chain.

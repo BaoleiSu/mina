@@ -26,11 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.mina.api.IoFilterChain;
 import org.apache.mina.api.IoFuture;
 import org.apache.mina.api.IoService;
 import org.apache.mina.api.IoSession;
-import org.apache.mina.filterchain.DefaultIoFilterChain;
+import org.apache.mina.filterchain.DefaultIoFilterProcessor;
+import org.apache.mina.filterchain.IoFilterProcessor;
 import org.apache.mina.service.SelectorProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +85,7 @@ public abstract class AbstractIoSession implements IoSession {
     /** the queue of pending writes for the session, to be dequeued by the {@link SelectorProcessor} */
     private Queue<WriteRequest> writeQueue = new DefaultWriteQueue();
 
-    /** the chain for filtering the events of this session */
-    private IoFilterChain filterChain = new DefaultIoFilterChain();
+    private IoFilterProcessor filterProcessor;
 
     /**
      * Create an {@link org.apache.mina.api.IoSession} with a unique identifier (
@@ -101,6 +100,7 @@ public abstract class AbstractIoSession implements IoSession {
         creationTime = System.currentTimeMillis();
         this.service = service;
         this.writeProcessor = writeProcessor;
+        this.filterProcessor = new DefaultIoFilterProcessor(service.getFilters());
 
         LOG.debug("Created new session with id : {}", id);
         synchronized (stateMonitor) {
@@ -257,7 +257,7 @@ public abstract class AbstractIoSession implements IoSession {
     }
 
     @Override
-    public IoFilterChain getFilterChain() {
-        return filterChain;
+    public IoFilterProcessor getFilterChain() {
+        return filterProcessor;
     }
 }
