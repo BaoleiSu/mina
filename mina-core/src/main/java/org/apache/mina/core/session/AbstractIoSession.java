@@ -284,11 +284,15 @@ public abstract class AbstractIoSession implements IoSession {
      * {@inheritDoc}
      */
     public final CloseFuture close(boolean rightNow) {
-        if (rightNow) {
-            return close();
+        if ( !isClosing() ) {
+            if (rightNow) {
+                return close();
+            }
+    
+            return closeOnFlush();
+        } else {
+            return closeFuture;
         }
-
-        return closeOnFlush();
     }
 
     /**
@@ -440,7 +444,7 @@ public abstract class AbstractIoSession implements IoSession {
      */
     public WriteFuture write(Object message, SocketAddress remoteAddress) {
         if (message == null) {
-            throw new IllegalArgumentException("message");
+            throw new IllegalArgumentException("Trying to write a null message : not allowed");
         }
 
         // We can't send a message to a connected session if we don't have
@@ -1376,6 +1380,13 @@ public abstract class AbstractIoSession implements IoSession {
          */
         public void dispose(IoSession session) {
             queue.dispose(session);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int size() {
+            return queue.size();
         }
     }
 }

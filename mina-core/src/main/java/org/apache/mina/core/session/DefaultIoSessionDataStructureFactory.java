@@ -21,7 +21,6 @@ package org.apache.mina.core.session;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,22 +37,18 @@ import org.apache.mina.core.write.WriteRequestQueue;
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class DefaultIoSessionDataStructureFactory implements
-        IoSessionDataStructureFactory {
+public class DefaultIoSessionDataStructureFactory implements IoSessionDataStructureFactory {
 
-    public IoSessionAttributeMap getAttributeMap(IoSession session)
-            throws Exception {
+    public IoSessionAttributeMap getAttributeMap(IoSession session) throws Exception {
         return new DefaultIoSessionAttributeMap();
     }
-    
-    public WriteRequestQueue getWriteRequestQueue(IoSession session)
-            throws Exception {
+
+    public WriteRequestQueue getWriteRequestQueue(IoSession session) throws Exception {
         return new DefaultWriteRequestQueue();
     }
 
     private static class DefaultIoSessionAttributeMap implements IoSessionAttributeMap {
-        private final Map<Object, Object> attributes =
-            new ConcurrentHashMap<Object, Object>(4);
+        private final ConcurrentHashMap<Object, Object> attributes = new ConcurrentHashMap<Object, Object>(4);
 
         /**
          * Default constructor
@@ -61,20 +56,31 @@ public class DefaultIoSessionDataStructureFactory implements
         public DefaultIoSessionAttributeMap() {
             super();
         }
-        
+
+        /**
+         * {@inheritDoc}
+         */
         public Object getAttribute(IoSession session, Object key, Object defaultValue) {
             if (key == null) {
                 throw new IllegalArgumentException("key");
             }
 
-            Object answer = attributes.get(key);
-            if (answer == null) {
-                return defaultValue;
+            if (defaultValue == null) {
+                return attributes.get(key);
             }
-            
-            return answer;
+
+            Object object = attributes.putIfAbsent(key, defaultValue);
+
+            if (object == null) {
+                return defaultValue;
+            } else {
+                return object;
+            }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Object setAttribute(IoSession session, Object key, Object value) {
             if (key == null) {
                 throw new IllegalArgumentException("key");
@@ -83,10 +89,13 @@ public class DefaultIoSessionDataStructureFactory implements
             if (value == null) {
                 return attributes.remove(key);
             }
-            
+
             return attributes.put(key, value);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Object setAttributeIfAbsent(IoSession session, Object key, Object value) {
             if (key == null) {
                 throw new IllegalArgumentException("key");
@@ -96,16 +105,12 @@ public class DefaultIoSessionDataStructureFactory implements
                 return null;
             }
 
-            Object oldValue;
-            synchronized (attributes) {
-                oldValue = attributes.get(key);
-                if (oldValue == null) {
-                    attributes.put(key, value);
-                }
-            }
-            return oldValue;
+            return attributes.putIfAbsent(key, value);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Object removeAttribute(IoSession session, Object key) {
             if (key == null) {
                 throw new IllegalArgumentException("key");
@@ -114,6 +119,9 @@ public class DefaultIoSessionDataStructureFactory implements
             return attributes.remove(key);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean removeAttribute(IoSession session, Object key, Object value) {
             if (key == null) {
                 throw new IllegalArgumentException("key");
@@ -123,47 +131,49 @@ public class DefaultIoSessionDataStructureFactory implements
                 return false;
             }
 
-            synchronized (attributes) {
-                if (value.equals(attributes.get(key))) {
-                    attributes.remove(key);
-                    return true;
-                }
+            try {
+                return attributes.remove(key, value);
+            } catch (NullPointerException e) {
+                return false;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean replaceAttribute(IoSession session, Object key, Object oldValue, Object newValue) {
+            try {
+                return attributes.replace(key, oldValue, newValue);
+            } catch (NullPointerException e) {
             }
 
             return false;
         }
 
-        public boolean replaceAttribute(IoSession session, Object key, Object oldValue, Object newValue) {
-            synchronized (attributes) {
-                Object actualOldValue = attributes.get(key);
-                if (actualOldValue == null) {
-                    return false;
-                }
-
-                if (actualOldValue.equals(oldValue)) {
-                    attributes.put(key, newValue);
-                    return true;
-                }
-                
-                return false;
-            }
-        }
-
+        /**
+         * {@inheritDoc}
+         */
         public boolean containsAttribute(IoSession session, Object key) {
             return attributes.containsKey(key);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Set<Object> getAttributeKeys(IoSession session) {
             synchronized (attributes) {
                 return new HashSet<Object>(attributes.keySet());
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void dispose(IoSession session) throws Exception {
             // Do nothing
         }
     }
-    
+
     private static class DefaultWriteRequestQueue implements WriteRequestQueue {
         /** A queue to store incoming write requests */
         private final Queue<WriteRequest> q = new ConcurrentLinkedQueue<WriteRequest>();
@@ -174,14 +184,14 @@ public class DefaultIoSessionDataStructureFactory implements
         public DefaultWriteRequestQueue() {
             super();
         }
-        
+
         /**
          * {@inheritDoc}
          */
         public void dispose(IoSession session) {
             // Do nothing
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -209,10 +219,17 @@ public class DefaultIoSessionDataStructureFactory implements
         public synchronized WriteRequest poll(IoSession session) {
             return q.poll();
         }
-        
+
         @Override
         public String toString() {
             return q.toString();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int size() {
+            return q.size();
         }
     }
 }

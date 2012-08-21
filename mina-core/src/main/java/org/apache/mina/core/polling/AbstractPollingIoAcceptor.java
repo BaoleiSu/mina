@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.mina.core.RuntimeIoException;
@@ -66,6 +67,8 @@ import org.apache.mina.util.ExceptionMonitor;
  */
 public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
         extends AbstractIoAcceptor {
+    /** A lock used to protect the selector to be waked up before it's created */
+    private final Semaphore lock = new Semaphore(1);
 
     private final IoProcessor<S> processor;
 
@@ -83,12 +86,12 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
     /** A flag set when the acceptor has been created and initialized */
     private volatile boolean selectable;
 
-    /** The thread responsible of accepting incoming requests */ 
+    /** The thread responsible of accepting incoming requests */
     private AtomicReference<Acceptor> acceptorRef = new AtomicReference<Acceptor>();
 
     protected boolean reuseAddress = false;
 
-    /** 
+    /**
      * Define the number of socket that can wait to be accepted. Default
      * to 50 (as in the SocketServer default).
      */
@@ -142,8 +145,8 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
      * 
      * @param sessionConfig
      *            the default configuration for the managed {@link IoSession}
-     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of this transport, triggering 
-     *            events to the bound {@link IoHandler} and processing the chains of {@link IoFilter} 
+     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of this transport, triggering
+     *            events to the bound {@link IoHandler} and processing the chains of {@link IoFilter}
      */
     protected AbstractPollingIoAcceptor(IoSessionConfig sessionConfig,
             IoProcessor<S> processor) {
@@ -163,8 +166,8 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
      * @param executor
      *            the {@link Executor} used for handling asynchronous execution of I/O
      *            events. Can be <code>null</code>.
-     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of this transport, triggering 
-     *            events to the bound {@link IoHandler} and processing the chains of {@link IoFilter} 
+     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of this transport, triggering
+     *            events to the bound {@link IoHandler} and processing the chains of {@link IoFilter}
      */
     protected AbstractPollingIoAcceptor(IoSessionConfig sessionConfig,
             Executor executor, IoProcessor<S> processor) {
@@ -184,11 +187,11 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
      * @param executor
      *            the {@link Executor} used for handling asynchronous execution of I/O
      *            events. Can be <code>null</code>.
-     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of 
-     * this transport, triggering events to the bound {@link IoHandler} and processing 
+     * @param processor the {@link IoProcessor} for processing the {@link IoSession} of
+     * this transport, triggering events to the bound {@link IoHandler} and processing
      * the chains of {@link IoFilter}
-     * @param createdProcessor tagging the processor as automatically created, so it 
-     * will be automatically disposed 
+     * @param createdProcessor tagging the processor as automatically created, so it
+     * will be automatically disposed
      */
     private AbstractPollingIoAcceptor(IoSessionConfig sessionConfig,
             Executor executor, IoProcessor<S> processor,
@@ -226,13 +229,13 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
 
     /**
      * Initialize the polling system, will be called at construction time.
-     * @throws Exception any exception thrown by the underlying system calls  
+     * @throws Exception any exception thrown by the underlying system calls
      */
     protected abstract void init() throws Exception;
 
     /**
      * Destroy the polling system, will be called when this {@link IoAcceptor}
-     * implementation will be disposed.  
+     * implementation will be disposed.
      * @throws Exception any exception thrown by the underlying systems calls
      */
     protected abstract void destroy() throws Exception;
@@ -276,7 +279,7 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
     /**
      * Accept a client connection for a server socket and return a new {@link IoSession}
      * associated with the given {@link IoProcessor}
-     * @param processor the {@link IoProcessor} to associate with the {@link IoSession}  
+     * @param processor the {@link IoProcessor} to associate with the {@link IoSession}
      * @param handle the server handle
      * @return the created {@link IoSession}
      * @throws Exception any exception thrown by the underlying systems calls
@@ -322,9 +325,19 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
         startupAcceptor();
         
         // As we just started the acceptor, we have to unblock the select()
-        // in order to process the bind request we just have added to the 
+        // in order to process the bind request we just have added to the
         // registerQueue.
-        wakeup();
+        try {
+            lock.acquire();
+            
+            // Wait a bit to give a chance to the Acceptor thread to do the select()
+            Thread.sleep( 10 );
+            wakeup();
+        }
+        finally
+        {
+            lock.release();
+        }
         
         // Now, we wait until this request is completed.
         request.awaitUninterruptibly();
@@ -353,7 +366,7 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
      * is now working, then nothing will happen and the method
      * will just return.
      */
-    private void startupAcceptor() {
+    private void startupAcceptor() throws InterruptedException {
         // If the acceptor is not ready, clear the queues
         // TODO : they should already be clean : do we have to do that ?
         if (!selectable) {
@@ -365,10 +378,13 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
         Acceptor acceptor = acceptorRef.get();
 
         if (acceptor == null) {
+            lock.acquire();
             acceptor = new Acceptor();
 
             if (acceptorRef.compareAndSet(null, acceptor)) {
                 executeWorker(acceptor);
+            } else {
+                lock.release();
             }
         }
     }
@@ -404,6 +420,9 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
 
             int nHandles = 0;
 
+            // Release the lock
+            lock.release();
+
             while (selectable) {
                 try {
                     // Detect if we have some keys ready to be processed
@@ -437,8 +456,8 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
                     }
 
                     if (selected > 0) {
-                        // We have some connection request, let's process 
-                        // them here. 
+                        // We have some connection request, let's process
+                        // them here.
                         processHandles(selectedHandles());
                     }
 
@@ -501,7 +520,7 @@ public abstract class AbstractPollingIoAcceptor<S extends AbstractIoSession, H>
                 S session = accept(processor, handle);
                 
                 if (session == null) {
-                    break;
+                    continue;
                 }
 
                 initSession(session, null, null);
